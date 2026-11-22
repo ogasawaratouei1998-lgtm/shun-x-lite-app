@@ -1,4 +1,4 @@
-import {prepare,register,unregister,secondDisplayTest,inspectRemote} from './browser-registration.js?v=10';
+import {prepare,register,unregister,secondDisplayTest,inspectRemote} from './browser-registration.js?v=11';
 const $=id=>document.getElementById(id);
 const iOS=/iPad|iPhone|iPod/.test(navigator.userAgent||'');
 const standalone=window.matchMedia?.('(display-mode: standalone)')?.matches===true || navigator.standalone===true;
