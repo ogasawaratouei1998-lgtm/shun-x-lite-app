@@ -43,7 +43,7 @@ jobs:
           set -eu
           base='https://ogasawaratouei1998-lgtm.github.io/shun-x-lite-app'
           for n in $(seq 1 18); do
-            if curl -fsSL --retry 1 "$base/index.html" | grep -q 'enrollment.js?v=10'; then break; fi
+            if curl -fsSL --retry 1 "$base/index.html" | grep -q 'enrollment.js?v=11'; then break; fi
             if [ "$n" = 18 ]; then echo 'PAGES_UPDATE_MISSING'; exit 1; fi
             sleep 5
           done
