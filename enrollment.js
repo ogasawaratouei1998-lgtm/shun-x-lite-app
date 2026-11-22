@@ -1,9 +1,9 @@
-import {prepare,register,unregister,secondDisplayTest,inspectRemote} from './browser-registration.js?v=11';
+import {prepare,register,unregister,recoverSubscription,thirdDisplayTest,inspectRemote} from './browser-registration.js?v=12';
 const $=id=>document.getElementById(id);
 const iOS=/iPad|iPhone|iPod/.test(navigator.userAgent||'');
 const standalone=window.matchMedia?.('(display-mode: standalone)')?.matches===true || navigator.standalone===true;
 let reg=null,key=null,busy=false;
-let last='通知登録 v11 を読み込みました。通知サーバーと端末の状態を確認しています。';
+let last='通知登録 v12 を読み込みました。通知サーバーと端末の状態を確認しています。';
 function hint(){
  if(!window.isSecureContext)return 'HTTPSで開いてください。';
  if(!('serviceWorker' in navigator))return 'このブラウザーではService Workerが使用できません。';
@@ -23,6 +23,7 @@ function paint(){
  $('enroll-guidance').textContent=hint();
  $('push-prepare').disabled=busy;
  $('push-enroll').disabled=busy;
+ $('push-repair').disabled=busy;
  $('push-remove').disabled=busy;
  $('push-remote-test').disabled=false; // Always clickable: diagnostic feedback is local and immediate.
  $('push-inspect').disabled=false;
@@ -62,6 +63,21 @@ $('push-enroll').addEventListener('click',async()=>{
   $('pairing-code').value='';busy=false;paint();
  }
 });
+// Restore on an explicit tap only. The new subscription is not sent any push during recovery.
+$('push-repair').addEventListener('click',async()=>{
+ if(busy)return;
+ if(iOS&&!standalone){message('ホーム画面のSHUN-X Liteから操作してください。復旧は実行していません。');return;}
+ if(!reg?.pushManager||!('Notification' in window)||Notification.permission!=='granted'){message('通知許可または端末の通知基盤を確認してください。復旧は実行していません。');return;}
+ if(!key){message('先に「通知サーバーの状態を確認」を押してください。復旧は実行していません。');return;}
+ const code=$('pairing-code').value;
+ if(!/^[A-Za-z0-9_-]{43}$/.test(code)){message('初回端末登録用コード欄に43文字のコードを入力してください。復旧は実行していません。');return;}
+ busy=true;paint();message('このiPhoneのプッシュ購読を再作成し、本人認証付きでサーバーを更新しています。通知は送信しません。');
+ try{
+  await recoverSubscription({manager:reg.pushManager,key,code,permission:Notification.permission});
+  message('復旧登録が完了しました。手順3の診断で購読ありを確認し、手順4で登録照合してください。通知はまだ送信していません。');
+ }catch(e){const v=e?.message||'';message('購読の復旧を確認できません（'+(v.startsWith('BACKEND_')?v:v==='KEY_MISMATCH'?'通知鍵が不一致':v==='SETUP_REQUIRED'?'設定不足':'端末または通信エラー')+'）。通知の自動送信・再登録は行いません。');}
+ finally{$('pairing-code').value='';busy=false;paint();}
+});
 // Display feedback directly below the remote button for every branch; never initiate a send in startup hooks.
 const remoteStatus=$('remote-test-status');
 function remoteMessage(text){remoteStatus.textContent=text;remoteStatus.setAttribute?.('data-result','updated');}
@@ -93,7 +109,7 @@ $('push-inspect').addEventListener('click',async()=>{
   if(!sub){out.textContent='この端末にプッシュ購読がありません。再登録の要否を確認してください。遠隔送信なし。';return;}
   const state=await inspectRemote({code,endpoint:sub.endpoint});
   const label=s=>s==='accepted'?'Apple側受付済み':s==='not_attempted'?'未送信':s==='unknown'?'結果不明':s==='claimed'?'送信処理中':s==='gone'?'端末無効':'要確認';
-  out.textContent=(state.deviceMatches?'このiPhoneの購読とサーバー登録は一致しています。':state.deviceRegistered?'サーバーの登録端末とこのiPhoneの購読が一致しません。再登録は原因確認後に行ってください。':'サーバーに登録端末がありません。')+' 第1回：'+label(state.tests.first)+'／第2回：'+label(state.tests.second)+'。受付はiPhone表示の確認ではありません。遠隔送信なし。';
+  out.textContent=(state.deviceMatches?'このiPhoneの購読とサーバー登録は一致しています。':state.deviceRegistered?'サーバーの登録端末とこのiPhoneの購読が一致しません。再登録は原因確認後に行ってください。':'サーバーに登録端末がありません。')+' 第1回：'+label(state.tests.first)+'／第2回：'+label(state.tests.second)+'／第3回：'+label(state.tests.third)+'。受付はiPhone表示の確認ではありません。遠隔送信なし。';
  }catch(e){out.textContent='照合できませんでした（'+((e?.message||'').startsWith('BACKEND_')?e.message:'通信または設定')+'）。コードと通信を確認してください。遠隔送信なし。';}
  finally{busy=false;paint();}
 });
@@ -108,7 +124,12 @@ $('push-remote-test').addEventListener('click',async()=>{
  busy=true;paint();
  remoteMessage('専用サーバーに接続テストを1回依頼しています。iPhoneへの配信完了はまだ確認できていません。');
  try{
-   const response=await secondDisplayTest({code});
+   const sub=await reg.pushManager.getSubscription();
+   if(!sub){remoteMessage('このiPhoneにプッシュ購読がありません。先に手順3の復旧を行ってください。通知は送信していません。');return;}
+   const check=await inspectRemote({code,endpoint:sub.endpoint});
+   if(!check.deviceMatches){remoteMessage('現在のiPhoneとサーバー登録が一致しません。再送せず、先に復旧してください。');return;}
+   if(check.tests.third!=='not_attempted'){remoteMessage('第3回テストはすでに実行済み、または処理中です。重複送信はしません。');return;}
+   const response=await thirdDisplayTest({code});
    if(response.alreadyAttempted)remoteMessage('この接続テストはすでに処理されています。重複送信は行いません。');
    else if(response.accepted)remoteMessage('サーバーは1回の送信を受理しました。実際にiPhoneに届いたか確認してください。');
    else remoteMessage('送信結果を確認できません。自動再送は行いません。');
