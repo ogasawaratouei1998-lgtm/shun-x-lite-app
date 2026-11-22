@@ -5,7 +5,7 @@
   if(reload)reload.addEventListener('click',async()=>{
     reload.disabled=true;reload.textContent='更新を確認しています';
     try{const registration=await navigator.serviceWorker?.getRegistration();await registration?.update();}catch{}
-    window.location.assign('./?app=v7');
+    window.location.assign('./?app=v8');
   });
   if('serviceWorker' in navigator){
     navigator.serviceWorker.addEventListener('controllerchange',()=>{

@@ -52,4 +52,4 @@ jobs:
           curl -fsSL --retry 2 "$base/boot.js" | grep -q 'shunxEnrollmentBooted'
           curl -fsSL --retry 2 "$base/enrollment.js" | grep -q 'oneTimeTest'
           curl -fsSI --retry 2 "$base/browser-registration.js" | tr -d '\r' | grep -Ei '^content-type: *(text/javascript|application/javascript|application/x-javascript)' >/dev/null
-          echo 'DEPLOYED_PWA_V7_VERIFIED: source loaded; no backend registration attempted'
+          echo 'DEPLOYED_PWA_V8_VERIFIED: source loaded; no backend registration attempted'
