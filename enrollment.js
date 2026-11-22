@@ -1,10 +1,10 @@
-import {prepare,register,unregister} from './browser-registration.js?v=7';
+import {prepare,register,unregister,oneTimeTest} from './browser-registration.js?v=8';
 window.__shunxEnrollmentBooted=true;
 const $=id=>document.getElementById(id);
 const iOS=/iPad|iPhone|iPod/.test(navigator.userAgent||'');
 const standalone=window.matchMedia?.('(display-mode: standalone)')?.matches===true || navigator.standalone===true;
 let reg=null,key=null,busy=false;
-let last='通知登録 v7 を読み込みました。通知サーバーと端末の状態を確認しています。';
+let last='通知登録 v8 を読み込みました。通知サーバーと端末の状態を確認しています。';
 function hint(){
  if(!window.isSecureContext)return 'HTTPSで開いてください。';
  if(!('serviceWorker' in navigator))return 'このブラウザーではService Workerが使用できません。';
@@ -25,7 +25,8 @@ function paint(){
  $('push-prepare').disabled=busy;
  $('push-enroll').disabled=busy;
  $('push-remove').disabled=busy;
- $('pairing-code').disabled=busy||!key;
+ $('push-remote-test').disabled=busy;
+ $('pairing-code').disabled=busy;
 }
 function message(s){last=s;paint();}
 async function check(){
@@ -59,6 +60,23 @@ $('push-enroll').addEventListener('click',async()=>{
  }finally{
   $('pairing-code').value='';busy=false;paint();
  }
+});
+$('push-remote-test').addEventListener('click',async()=>{
+ if(busy)return;
+ if(!reg||!reg.pushManager||Notification.permission!=='granted'){message('遠隔テストを実施できません。端末の通知許可とホーム画面アプリをご確認ください。');return;}
+ if(iOS&&!standalone){message('iPhoneではホーム画面のSHUN-X Liteアプリからテストしてください。');return;}
+ const code=$('pairing-code').value;
+ if(!/^[A-Za-z0-9_-]{43}$/.test(code)){message('遠隔テストにはSupabaseで設定した43文字の端末登録コードが必要です。');return;}
+ busy=true;paint();
+ $('remote-test-status').textContent='遠隔通知の送信を1回だけ依頼しています。';
+ try{
+   const response=await oneTimeTest({code});
+   if(response.alreadyAttempted) $('remote-test-status').textContent='この接続テストはすでに1回処理されています。重複送信は行いません。';
+   else if(response.accepted) $('remote-test-status').textContent='通知サーバーは送信依頼を受理しました。iPhoneに通知が届いたか確認してください。受信確認はまだです。';
+   else $('remote-test-status').textContent='テスト結果を確認できません。自動再送はしません。';
+ }catch(e){
+   $('remote-test-status').textContent=e?.message==='BACKEND_409'?'登録済み端末がありません。端末登録を確認してください。':'通信エラーまたは送信未確認です。曖昧な送信結果のため、自動再送しません。';
+ }finally{busy=false;$('pairing-code').value='';paint();}
 });
 $('push-remove').addEventListener('click',async()=>{
  if(busy)return;

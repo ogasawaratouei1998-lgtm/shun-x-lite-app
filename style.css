@@ -11,3 +11,6 @@ textarea{display:block;width:100%;font:inherit;color:inherit;background:#101826;
 #settings .panel .step-label{margin:20px 0 8px;font-weight:600;color:#aee7de}
 #settings #enroll-status,#settings #enroll-guidance,#settings #push-status{margin:10px 0;padding:10px 12px;border-radius:9px;background:#122131;color:#d4e4f3;overflow-wrap:anywhere}
 @media(max-width:380px){.update-row{flex-wrap:wrap}.update-row button{width:100%}}
+
+#remote-test-status{margin:12px 0;padding:10px 12px;border-radius:9px;background:#122131;line-height:1.6;color:#d4e4f3}
+#push-remote-test{border-color:#77baa7;background:#1d4a45}

@@ -42,3 +42,13 @@ export async function unregister({manager,fetcher=fetch}){
  try{localRevoked=await sub.unsubscribe();}catch{}
  return {localRevoked,serverConfirmed};
 }
+
+// User-initiated single remote connectivity test, fixed generic payload on the server.
+// The owner pairing code is sent only in this explicit HTTPS request and never saved.
+export async function oneTimeTest({code,fetcher=fetch}){
+ if(typeof code!=='string'||code.length!==43||!B64.test(code))throw Error('SETUP_REQUIRED');
+ const response=await request('test',{fetcher,body:{app:APP,code}});
+ if(response?.alreadyAttempted===true)return {alreadyAttempted:true};
+ if(response?.accepted===true&&response.deliveryConfirmed===false)return {accepted:true,deliveryConfirmed:false};
+ throw Error('TEST_UNCONFIRMED');
+}
