@@ -5,7 +5,7 @@
   if(reload)reload.addEventListener('click',async()=>{
     reload.disabled=true;reload.textContent='更新を確認しています';
     try{const registration=await navigator.serviceWorker?.getRegistration();await registration?.update();}catch{}
-    window.location.assign('./?app=v11');
+    window.location.assign('./?app=v12');
   });
   if('serviceWorker' in navigator){
     navigator.serviceWorker.addEventListener('controllerchange',()=>{
@@ -21,9 +21,9 @@
    if(window.__shunxEnrollmentBooted===true)return;
    status.textContent='通知画面のプログラムを読み込めません。アプリを一度終了して開き直してください。改善しない場合はSafariで最新版を開き、ホーム画面アプリを再起動してください。';
    const guidance=document.getElementById('enroll-guidance');
-   if(guidance)guidance.textContent='通知登録 v11 が未起動です。秘密情報は入力しないでください。';
+   if(guidance)guidance.textContent='通知登録 v12 が未起動です。秘密情報は入力しないでください。';
   };
-  for(const id of ['push-prepare','push-enroll','push-remove','push-remote-test','push-inspect','push-diagnose']){
+  for(const id of ['push-prepare','push-enroll','push-repair','push-remove','push-remote-test','push-inspect','push-diagnose']){
    const b=document.getElementById(id);
    if(b)b.addEventListener('click',()=>{if((id==='push-remote-test'||id==='push-inspect'||id==='push-diagnose')&&window.__shunxEnrollmentBooted!==true){const field=document.getElementById(id==='push-diagnose'?'diagnose-status':id==='push-inspect'?'inspect-status':'remote-test-status');if(field)field.textContent='通知登録プログラムを読み込めません。接続テストは送信していません。最新版に更新してください。';}report();},true);
   }
