@@ -11,6 +11,8 @@ on:
       - 'browser-registration.js'
       - 'tests/**'
       - '.github/workflows/ui-check.yml'
+  pull_request:
+    paths: ['index.html', 'boot.js', 'app.js', 'enrollment.js', 'sw.js', 'browser-registration.js', 'tests/**', '.github/workflows/ui-check.yml']
   workflow_run:
     workflows: ['pages build and deployment']
     types: [completed]
@@ -18,7 +20,7 @@ permissions:
   contents: read
 jobs:
   unit:
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
