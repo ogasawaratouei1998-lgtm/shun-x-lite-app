@@ -11,6 +11,8 @@ on:
       - 'browser-registration.js'
       - 'tests/**'
       - '.github/workflows/ui-check.yml'
+  pull_request:
+    paths: ['index.html', 'boot.js', 'app.js', 'enrollment.js', 'sw.js', 'browser-registration.js', 'tests/**', '.github/workflows/ui-check.yml']
   workflow_run:
     workflows: ['pages build and deployment']
     types: [completed]
@@ -18,7 +20,7 @@ permissions:
   contents: read
 jobs:
   unit:
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
@@ -43,15 +45,15 @@ jobs:
           set -eu
           base='https://ogasawaratouei1998-lgtm.github.io/shun-x-lite-app'
           for n in $(seq 1 18); do
-            if curl -fsSL --retry 1 "$base/index.html" | grep -q 'enrollment.js?v=10'; then break; fi
+            if curl -fsSL --retry 1 "$base/index.html" | grep -q 'enrollment.js?v=11'; then break; fi
             if [ "$n" = 18 ]; then echo 'PAGES_UPDATE_MISSING'; exit 1; fi
             sleep 5
           done
           curl -fsSL --retry 2 "$base/enrollment.js" | grep -q 'browser-registration.js'
-          curl -fsSL --retry 2 "$base/sw.js" | grep -q 'shunx-pages-preview-v10'
+          curl -fsSL --retry 2 "$base/sw.js" | grep -q 'shunx-pages-preview-v11'
           curl -fsSL --retry 2 "$base/boot.js" | grep -q 'shunxEnrollmentBooted'
           curl -fsSL --retry 2 "$base/enrollment.js" | grep -q 'secondDisplayTest'
           curl -fsSL --retry 2 "$base/index.html" | grep -q 'id="remote-code"'
           curl -fsSL --retry 2 "$base/sw.js" | grep -q 'web_push===8030'
           curl -fsSI --retry 2 "$base/browser-registration.js" | tr -d '\r' | grep -Ei '^content-type: *(text/javascript|application/javascript|application/x-javascript)' >/dev/null
-          echo 'DEPLOYED_PWA_V10_VERIFIED: source loaded; no backend registration attempted'
+          echo 'DEPLOYED_PWA_V11_VERIFIED: source loaded; no backend registration attempted'

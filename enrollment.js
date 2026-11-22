@@ -1,9 +1,9 @@
-import {prepare,register,unregister,secondDisplayTest} from './browser-registration.js?v=10';
+import {prepare,register,unregister,secondDisplayTest,inspectRemote} from './browser-registration.js?v=11';
 const $=id=>document.getElementById(id);
 const iOS=/iPad|iPhone|iPod/.test(navigator.userAgent||'');
 const standalone=window.matchMedia?.('(display-mode: standalone)')?.matches===true || navigator.standalone===true;
 let reg=null,key=null,busy=false;
-let last='通知登録 v10 を読み込みました。通知サーバーと端末の状態を確認しています。';
+let last='通知登録 v11 を読み込みました。通知サーバーと端末の状態を確認しています。';
 function hint(){
  if(!window.isSecureContext)return 'HTTPSで開いてください。';
  if(!('serviceWorker' in navigator))return 'このブラウザーではService Workerが使用できません。';
@@ -25,6 +25,7 @@ function paint(){
  $('push-enroll').disabled=busy;
  $('push-remove').disabled=busy;
  $('push-remote-test').disabled=false; // Always clickable: diagnostic feedback is local and immediate.
+ $('push-inspect').disabled=false;
  $('push-diagnose').disabled=false;
  $('pairing-code').disabled=busy;
 }
@@ -77,6 +78,24 @@ $('push-diagnose').addEventListener('click',async()=>{
   const count=Array.isArray(found)?found.length:0;
   out.textContent='通知許可済み・Apple向け端末購読あり。'+(count?'表示履歴の候補 '+count+' 件を端末で確認できます。':'現在表示中の改善版通知は未検出です。')+' iPhoneの「設定 → 通知 → SHUN-X Lite」と集中モード、通知センターも確認してください。遠隔送信なし。';
  }catch{out.textContent='端末購読を確認できません。通知設定とアプリの再起動をご確認ください。遠隔送信なし。';}
+});
+// Inspect the enrolled device by endpoint digest. It never triggers a push or retries a test.
+$('push-inspect').addEventListener('click',async()=>{
+ const out=$('inspect-status');out.textContent='端末とサーバーを照合しています。遠隔送信なし。';
+ if(busy){out.textContent='別の処理が進行中です。完了後に照合してください。遠隔送信なし。';return;}
+ if(iOS&&!standalone){out.textContent='ホーム画面のSHUN-X Liteから操作してください。遠隔送信なし。';return;}
+ if(!('Notification' in window)||Notification.permission!=='granted'||!reg?.pushManager){out.textContent='端末通知が未許可または未起動です。遠隔送信なし。';return;}
+ const code=$('remote-code').value;
+ if(!/^[A-Za-z0-9_-]{43}$/.test(code)){out.textContent='遠隔テスト用コード43文字を入力してください。遠隔送信なし。';return;}
+ busy=true;paint();
+ try{
+  const sub=await reg.pushManager.getSubscription();
+  if(!sub){out.textContent='この端末にプッシュ購読がありません。再登録の要否を確認してください。遠隔送信なし。';return;}
+  const state=await inspectRemote({code,endpoint:sub.endpoint});
+  const label=s=>s==='accepted'?'Apple側受付済み':s==='not_attempted'?'未送信':s==='unknown'?'結果不明':s==='claimed'?'送信処理中':s==='gone'?'端末無効':'要確認';
+  out.textContent=(state.deviceMatches?'このiPhoneの購読とサーバー登録は一致しています。':state.deviceRegistered?'サーバーの登録端末とこのiPhoneの購読が一致しません。再登録は原因確認後に行ってください。':'サーバーに登録端末がありません。')+' 第1回：'+label(state.tests.first)+'／第2回：'+label(state.tests.second)+'。受付はiPhone表示の確認ではありません。遠隔送信なし。';
+ }catch(e){out.textContent='照合できませんでした（'+((e?.message||'').startsWith('BACKEND_')?e.message:'通信または設定')+'）。コードと通信を確認してください。遠隔送信なし。';}
+ finally{busy=false;paint();}
 });
 $('push-remote-test').addEventListener('click',async()=>{
  remoteMessage('ボタン操作を受け付けました。端末と登録コードを確認しています。');

@@ -61,3 +61,13 @@ export async function secondDisplayTest({code,fetcher=fetch}){
  if(result?.accepted===true&&result.deliveryConfirmed===false)return {accepted:true,deliveryConfirmed:false};
  throw Error('TEST_UNCONFIRMED');
 }
+
+// Owner-authorized read-only inspection; only a SHA-256 digest leaves the device, never the endpoint itself.
+export async function inspectRemote({code,endpoint,fetcher=fetch}){
+ if(typeof code!=='string'||!/^[A-Za-z0-9_-]{43}$/.test(code)||typeof endpoint!=='string'||!endpoint.startsWith('https://'))throw Error('SETUP_REQUIRED');
+ const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(endpoint));
+ const endpointHash=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('');
+ const info=await request('inspect',{fetcher,body:{app:APP,code,endpointHash}});
+ if(typeof info?.deviceRegistered!=='boolean'||typeof info?.deviceMatches!=='boolean'||!info?.tests||typeof info.tests.first!=='string'||typeof info.tests.second!=='string'||info.deliveryConfirmed!==false)throw Error('INSPECT_UNCONFIRMED');
+ return {deviceRegistered:info.deviceRegistered,deviceMatches:info.deviceMatches,tests:{first:info.tests.first,second:info.tests.second},deliveryConfirmed:false};
+}
