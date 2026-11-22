@@ -1,10 +1,9 @@
-import {prepare,register,unregister,oneTimeTest} from './browser-registration.js?v=8';
-window.__shunxEnrollmentBooted=true;
+import {prepare,register,unregister,oneTimeTest} from './browser-registration.js?v=9';
 const $=id=>document.getElementById(id);
 const iOS=/iPad|iPhone|iPod/.test(navigator.userAgent||'');
 const standalone=window.matchMedia?.('(display-mode: standalone)')?.matches===true || navigator.standalone===true;
 let reg=null,key=null,busy=false;
-let last='通知登録 v8 を読み込みました。通知サーバーと端末の状態を確認しています。';
+let last='通知登録 v9 を読み込みました。通知サーバーと端末の状態を確認しています。';
 function hint(){
  if(!window.isSecureContext)return 'HTTPSで開いてください。';
  if(!('serviceWorker' in navigator))return 'このブラウザーではService Workerが使用できません。';
@@ -25,7 +24,7 @@ function paint(){
  $('push-prepare').disabled=busy;
  $('push-enroll').disabled=busy;
  $('push-remove').disabled=busy;
- $('push-remote-test').disabled=busy;
+ $('push-remote-test').disabled=false; // Always clickable: diagnostic feedback is local and immediate.
  $('pairing-code').disabled=busy;
 }
 function message(s){last=s;paint();}
@@ -61,22 +60,32 @@ $('push-enroll').addEventListener('click',async()=>{
   $('pairing-code').value='';busy=false;paint();
  }
 });
+// Display feedback directly below the remote button for every branch; never initiate a send in startup hooks.
+const remoteStatus=$('remote-test-status');
+function remoteMessage(text){remoteStatus.textContent=text;remoteStatus.setAttribute?.('data-result','updated');}
 $('push-remote-test').addEventListener('click',async()=>{
- if(busy)return;
- if(!reg||!reg.pushManager||Notification.permission!=='granted'){message('遠隔テストを実施できません。端末の通知許可とホーム画面アプリをご確認ください。');return;}
- if(iOS&&!standalone){message('iPhoneではホーム画面のSHUN-X Liteアプリからテストしてください。');return;}
- const code=$('pairing-code').value;
- if(!/^[A-Za-z0-9_-]{43}$/.test(code)){message('遠隔テストにはSupabaseで設定した43文字の端末登録コードが必要です。');return;}
+ remoteMessage('ボタン操作を受け付けました。端末と登録コードを確認しています。');
+ if(busy){remoteMessage('通知サーバーの確認処理中です。処理完了後に押してください。まだ送信していません。');return;}
+ if(iOS&&!standalone){remoteMessage('iPhoneではホーム画面に追加したSHUN-X Liteから操作してください。まだ送信していません。');return;}
+ if(!reg||!reg.pushManager){remoteMessage('端末の通知機能が起動していません。アプリを再起動してください。まだ送信していません。');return;}
+ if(!('Notification' in window)||Notification.permission!=='granted'){remoteMessage('通知が許可されていません。先に通知を許可してください。まだ送信していません。');return;}
+ const code=$('remote-code').value;
+ if(!/^[A-Za-z0-9_-]{43}$/.test(code)){remoteMessage('遠隔テスト用の専用入力欄に、Supabaseで設定した43文字のコードを再入力してください。まだ送信していません。');return;}
  busy=true;paint();
- $('remote-test-status').textContent='遠隔通知の送信を1回だけ依頼しています。';
+ remoteMessage('専用サーバーに接続テストを1回依頼しています。iPhoneへの配信完了はまだ確認できていません。');
  try{
    const response=await oneTimeTest({code});
-   if(response.alreadyAttempted) $('remote-test-status').textContent='この接続テストはすでに1回処理されています。重複送信は行いません。';
-   else if(response.accepted) $('remote-test-status').textContent='通知サーバーは送信依頼を受理しました。iPhoneに通知が届いたか確認してください。受信確認はまだです。';
-   else $('remote-test-status').textContent='テスト結果を確認できません。自動再送はしません。';
+   if(response.alreadyAttempted)remoteMessage('この接続テストはすでに処理されています。重複送信は行いません。');
+   else if(response.accepted)remoteMessage('サーバーは1回の送信を受理しました。実際にiPhoneに届いたか確認してください。');
+   else remoteMessage('送信結果を確認できません。自動再送は行いません。');
  }catch(e){
-   $('remote-test-status').textContent=e?.message==='BACKEND_409'?'登録済み端末がありません。端末登録を確認してください。':'通信エラーまたは送信未確認です。曖昧な送信結果のため、自動再送しません。';
- }finally{busy=false;$('pairing-code').value='';paint();}
+   const v=e?.message||'';
+   if(v==='BACKEND_403')remoteMessage('登録コードが一致しないか、送信が許可されていません。通知は送信していません。');
+   else if(v==='BACKEND_409')remoteMessage('通知サーバーに登録済み端末が見つかりません。通知は送信していません。');
+   else remoteMessage('通信または送信結果を確認できません（'+(v.startsWith('BACKEND_')?v:'NETWORK')+'）。送信された可能性もあるため自動再送はしません。');
+ }finally{
+   $('remote-code').value='';busy=false;paint();
+ }
 });
 $('push-remove').addEventListener('click',async()=>{
  if(busy)return;
@@ -102,3 +111,6 @@ if(!window.isSecureContext||!('serviceWorker' in navigator)||!('Notification' in
   return r.update().catch(()=>{});
  }).catch(()=>message('Service Workerの起動に失敗しました。アプリを終了して再起動してください。'));
 }
+
+// Set only after handlers are bound: the fallback script can detect incomplete initialization.
+window.__shunxEnrollmentBooted=true;

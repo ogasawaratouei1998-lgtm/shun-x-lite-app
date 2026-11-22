@@ -14,3 +14,7 @@ textarea{display:block;width:100%;font:inherit;color:inherit;background:#101826;
 
 #remote-test-status{margin:12px 0;padding:10px 12px;border-radius:9px;background:#122131;line-height:1.6;color:#d4e4f3}
 #push-remote-test{border-color:#77baa7;background:#1d4a45}
+
+/* Remote connectivity test: status immediately beneath action, distinct from enrollment */
+#remote-test-status{border:1px solid #5d927f;background:#17302e;color:#e8fbf4;min-height:52px;font-size:14px;line-height:1.7}
+#remote-code{border:2px solid #5d927f;min-height:48px}
