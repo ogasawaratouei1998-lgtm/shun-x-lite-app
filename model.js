@@ -1,0 +1,3 @@
+export const samples=Object.freeze([{code:'DEMO-A',name:'架空の成長企業 A',price:400,per:720,dcf:800.02,limit:416.14,status:'BUY候補プレビュー'},{code:'DEMO-B',name:'架空の成長企業 B',price:930,per:1000,dcf:1020,limit:600,status:'WATCH'}].map(Object.freeze));
+export function filterSamples(query){const q=String(query).trim().toLowerCase();return samples.filter(c=>[c.code,c.name,c.status].some(s=>s.toLowerCase().includes(q)));}
+export function canTest(secure,ready,permission){return secure===true&&ready===true&&permission==='granted';}
