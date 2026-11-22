@@ -89,7 +89,7 @@ $('push-diagnose').addEventListener('click',async()=>{
  if(!reg||!reg.pushManager){out.textContent='通知のService Workerが起動していません。アプリを閉じて起動し直してください。遠隔送信なし。';return;}
  try{
   const subscription=await reg.pushManager.getSubscription();
-  if(!subscription){out.textContent='このiPhoneで有効なプッシュ購読を確認できません。サーバー側の登録と不一致の可能性があります。遠隔送信なし。';return;}
+  if(!subscription){out.textContent='このiPhoneには有効なプッシュ購読がありません。手順2の初回端末登録用コードを入力して「このiPhoneの購読を復旧する」を押してください。遠隔送信なし。';return;}
   const found=typeof reg.getNotifications==='function'?await reg.getNotifications({tag:'shunx-remote-connectivity-v2'}):[];
   const count=Array.isArray(found)?found.length:0;
   out.textContent='通知許可済み・Apple向け端末購読あり。'+(count?'表示履歴の候補 '+count+' 件を端末で確認できます。':'現在表示中の改善版通知は未検出です。')+' iPhoneの「設定 → 通知 → SHUN-X Lite」と集中モード、通知センターも確認してください。遠隔送信なし。';
