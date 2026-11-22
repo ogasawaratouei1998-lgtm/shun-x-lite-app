@@ -1,0 +1,49 @@
+name: SHUN-X Lite public interaction checks
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'boot.js'
+      - 'app.js'
+      - 'enrollment.js'
+      - 'sw.js'
+      - 'browser-registration.js'
+      - 'tests/**'
+      - '.github/workflows/ui-check.yml'
+  workflow_run:
+    workflows: ['pages build and deployment']
+    types: [completed]
+permissions:
+  contents: read
+jobs:
+  unit:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - name: Check JavaScript syntax
+        run: |
+          for f in app.js enrollment.js browser-registration.js sw.js boot.js; do
+            node --input-type=module --check < "$f"
+          done
+      - name: Test startup and touch-button behavior
+        run: node --test tests/ui.test.mjs
+  deployed:
+    if: github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_repository.full_name == github.repository && github.event.workflow_run.head_branch == 'main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Verify deployed static PWA files and JavaScript MIME
+        run: |
+          set -eu
+          base='https://ogasawaratouei1998-lgtm.github.io/shun-x-lite-app'
+          curl -fsSL --retry 2 "$base/index.html" | grep -q 'enrollment.js?v=6'
+          curl -fsSL --retry 2 "$base/enrollment.js" | grep -q 'browser-registration.js'
+          curl -fsSL --retry 2 "$base/sw.js" | grep -q 'shunx-pages-preview-v6'
+          curl -fsSL --retry 2 "$base/boot.js" | grep -q 'shunxEnrollmentBooted'
+          curl -fsSI --retry 2 "$base/browser-registration.js" | tr -d '\r' | grep -Ei '^content-type: *(text/javascript|application/javascript|application/x-javascript)' >/dev/null
+          echo 'DEPLOYED_PWA_V6_VERIFIED: source loaded; no backend registration attempted'

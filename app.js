@@ -28,4 +28,4 @@ function status(){
 }
 $('enable').addEventListener('click',async()=>{try{await Notification.requestPermission();window.dispatchEvent(new Event('shunx-notification-permission-changed'));}catch{ $('notice').textContent='通知許可の取得に失敗しました。'; }status();});
 $('test').addEventListener('click',async()=>{try{if(!canTest(supported,Boolean(registration),Notification.permission))return;await registration.showNotification('SHUN-X Lite',{body:'端末内テスト通知です。本番の重要材料ではありません。',tag:'local-test',data:{path:'./'}});$('push-status').textContent='端末内テストを要求しました。実際の表示は端末で確認してください。';}catch{$('push-status').textContent='端末内テストに失敗しました。';}});
-status();if(supported){navigator.serviceWorker.register('./sw.js').then(()=>navigator.serviceWorker.ready).then(r=>{registration=r;status();}).catch(()=>{$('push-status').textContent='Service Workerを起動できません。';});}
+status();if(supported){navigator.serviceWorker.register('./sw.js').then(()=>navigator.serviceWorker.ready).then(r=>{registration=r;status();}).catch(()=>{$('push-status').textContent='Service Workerを起動できません。';});}window.__shunxAppBooted=true;
