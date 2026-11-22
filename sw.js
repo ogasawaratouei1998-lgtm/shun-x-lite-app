@@ -1,4 +1,4 @@
-const CACHE='shunx-pages-preview-v10';
+const CACHE='shunx-pages-preview-v11';
 const SHELL=['./','./index.html','./style.css?v=10','./app.js?v=10','./boot.js?v=10','./model.js','./enrollment.js?v=10','./browser-registration.js?v=10','./manifest.webmanifest','./icon.svg'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('shunx-pages-preview-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
