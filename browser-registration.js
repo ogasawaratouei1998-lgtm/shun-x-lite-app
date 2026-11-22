@@ -62,12 +62,30 @@ export async function secondDisplayTest({code,fetcher=fetch}){
  throw Error('TEST_UNCONFIRMED');
 }
 
+// Direct user gesture only; do not revoke new local subscription on a transport failure.
+export async function recoverSubscription({manager,key,code,permission,fetcher=fetch}){
+ if(permission!=='granted'||!(key instanceof Uint8Array)||key.length!==65||typeof code!=='string'||!/^[A-Za-z0-9_-]{43}$/.test(code))throw Error('SETUP_REQUIRED');
+ const sub=await manager.subscribe({userVisibleOnly:true,applicationServerKey:key});
+ const actual=sub.options?.applicationServerKey;
+ if(!actual||new Uint8Array(actual).length!==key.length||new Uint8Array(actual).some((v,i)=>v!==key[i]))throw Error('KEY_MISMATCH');
+ const result=await request('repair',{fetcher,body:{app:APP,code,subscription:sub.toJSON()}});
+ if(result?.repaired!==true)throw Error('REPAIR_UNCONFIRMED');
+ return {repaired:true,deliveryConfirmed:false};
+}
+export async function thirdDisplayTest({code,fetcher=fetch}){
+ if(typeof code!=='string'||!/^[A-Za-z0-9_-]{43}$/.test(code))throw Error('SETUP_REQUIRED');
+ const v=await request('test',{fetcher,body:{app:APP,code,testVersion:3}});
+ if(v?.alreadyAttempted===true)return {alreadyAttempted:true,deliveryConfirmed:false};
+ if(v?.accepted===true&&v.deliveryConfirmed===false)return {accepted:true,deliveryConfirmed:false};
+ throw Error('TEST_UNCONFIRMED');
+}
+
 // Owner-authorized read-only inspection; only a SHA-256 digest leaves the device, never the endpoint itself.
 export async function inspectRemote({code,endpoint,fetcher=fetch}){
  if(typeof code!=='string'||!/^[A-Za-z0-9_-]{43}$/.test(code)||typeof endpoint!=='string'||!endpoint.startsWith('https://'))throw Error('SETUP_REQUIRED');
  const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(endpoint));
  const endpointHash=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('');
  const info=await request('inspect',{fetcher,body:{app:APP,code,endpointHash}});
- if(typeof info?.deviceRegistered!=='boolean'||typeof info?.deviceMatches!=='boolean'||!info?.tests||typeof info.tests.first!=='string'||typeof info.tests.second!=='string'||info.deliveryConfirmed!==false)throw Error('INSPECT_UNCONFIRMED');
- return {deviceRegistered:info.deviceRegistered,deviceMatches:info.deviceMatches,tests:{first:info.tests.first,second:info.tests.second},deliveryConfirmed:false};
+ if(typeof info?.deviceRegistered!=='boolean'||typeof info?.deviceMatches!=='boolean'||!info?.tests||typeof info.tests.first!=='string'||typeof info.tests.second!=='string'||typeof info.tests.third!=='string'||info.deliveryConfirmed!==false)throw Error('INSPECT_UNCONFIRMED');
+ return {deviceRegistered:info.deviceRegistered,deviceMatches:info.deviceMatches,tests:{first:info.tests.first,second:info.tests.second,third:info.tests.third},deliveryConfirmed:false};
 }
