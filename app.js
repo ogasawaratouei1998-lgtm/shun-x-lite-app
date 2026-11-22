@@ -22,7 +22,7 @@ $('query').addEventListener('input',list);list();
 let registration;
 const supported=window.isSecureContext&&'serviceWorker' in navigator&&'Notification' in window;
 function status(){
-  $('push-status').textContent=!supported?'HTTPSまたは対応ブラウザが必要です。':!registration?'通知基盤を準備中、または未起動です。':Notification.permission==='granted'?'端末許可済み・サーバー配信未接続':Notification.permission==='denied'?'拒否されています。端末設定をご確認ください。':'通知は未許可です。';
+  $('push-status').textContent=!supported?'HTTPSまたは対応ブラウザが必要です。':!registration?'通知基盤を準備中、または未起動です。':Notification.permission==='granted'?'端末許可済み・遠隔登録の状態は上の欄をご確認ください':Notification.permission==='denied'?'拒否されています。端末設定をご確認ください。':'通知は未許可です。';
   $('enable').disabled=!supported||!registration||Notification.permission==='denied';
   $('test').disabled=!canTest(supported,Boolean(registration),supported?Notification.permission:'denied');
 }
