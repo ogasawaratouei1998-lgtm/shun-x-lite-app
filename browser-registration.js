@@ -52,3 +52,12 @@ export async function oneTimeTest({code,fetcher=fetch}){
  if(response?.accepted===true&&response.deliveryConfirmed===false)return {accepted:true,deliveryConfirmed:false};
  throw Error('TEST_UNCONFIRMED');
 }
+
+// A new, explicitly requested physical display check. This does not re-run test v1.
+export async function secondDisplayTest({code,fetcher=fetch}){
+ if(typeof code!=='string'||code.length!==43||!B64.test(code))throw Error('SETUP_REQUIRED');
+ const result=await request('test',{fetcher,body:{app:APP,code,testVersion:2}});
+ if(result?.alreadyAttempted===true)return {alreadyAttempted:true,deliveryConfirmed:false};
+ if(result?.accepted===true&&result.deliveryConfirmed===false)return {accepted:true,deliveryConfirmed:false};
+ throw Error('TEST_UNCONFIRMED');
+}

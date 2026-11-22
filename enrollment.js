@@ -1,9 +1,9 @@
-import {prepare,register,unregister,oneTimeTest} from './browser-registration.js?v=9';
+import {prepare,register,unregister,secondDisplayTest} from './browser-registration.js?v=10';
 const $=id=>document.getElementById(id);
 const iOS=/iPad|iPhone|iPod/.test(navigator.userAgent||'');
 const standalone=window.matchMedia?.('(display-mode: standalone)')?.matches===true || navigator.standalone===true;
 let reg=null,key=null,busy=false;
-let last='通知登録 v9 を読み込みました。通知サーバーと端末の状態を確認しています。';
+let last='通知登録 v10 を読み込みました。通知サーバーと端末の状態を確認しています。';
 function hint(){
  if(!window.isSecureContext)return 'HTTPSで開いてください。';
  if(!('serviceWorker' in navigator))return 'このブラウザーではService Workerが使用できません。';
@@ -25,6 +25,7 @@ function paint(){
  $('push-enroll').disabled=busy;
  $('push-remove').disabled=busy;
  $('push-remote-test').disabled=false; // Always clickable: diagnostic feedback is local and immediate.
+ $('push-diagnose').disabled=false;
  $('pairing-code').disabled=busy;
 }
 function message(s){last=s;paint();}
@@ -63,6 +64,20 @@ $('push-enroll').addEventListener('click',async()=>{
 // Display feedback directly below the remote button for every branch; never initiate a send in startup hooks.
 const remoteStatus=$('remote-test-status');
 function remoteMessage(text){remoteStatus.textContent=text;remoteStatus.setAttribute?.('data-result','updated');}
+// No network or remote send: confirm only local Apple permission, SW and subscription state.
+$('push-diagnose').addEventListener('click',async()=>{
+ const out=$('diagnose-status');out.textContent='iPhoneの通知の状態を確認しています。遠隔送信はしません。';
+ if(iOS&&!standalone){out.textContent='ホーム画面のSHUN-X Liteアプリで開いてください。遠隔送信なし。';return;}
+ if(!('Notification' in window)||Notification.permission!=='granted'){out.textContent='通知が許可されていません。iPhoneの設定でSHUN-X Liteの通知を許可してください。遠隔送信なし。';return;}
+ if(!reg||!reg.pushManager){out.textContent='通知のService Workerが起動していません。アプリを閉じて起動し直してください。遠隔送信なし。';return;}
+ try{
+  const subscription=await reg.pushManager.getSubscription();
+  if(!subscription){out.textContent='このiPhoneで有効なプッシュ購読を確認できません。サーバー側の登録と不一致の可能性があります。遠隔送信なし。';return;}
+  const found=typeof reg.getNotifications==='function'?await reg.getNotifications({tag:'shunx-remote-connectivity-v2'}):[];
+  const count=Array.isArray(found)?found.length:0;
+  out.textContent='通知許可済み・Apple向け端末購読あり。'+(count?'表示履歴の候補 '+count+' 件を端末で確認できます。':'現在表示中の改善版通知は未検出です。')+' iPhoneの「設定 → 通知 → SHUN-X Lite」と集中モード、通知センターも確認してください。遠隔送信なし。';
+ }catch{out.textContent='端末購読を確認できません。通知設定とアプリの再起動をご確認ください。遠隔送信なし。';}
+});
 $('push-remote-test').addEventListener('click',async()=>{
  remoteMessage('ボタン操作を受け付けました。端末と登録コードを確認しています。');
  if(busy){remoteMessage('通知サーバーの確認処理中です。処理完了後に押してください。まだ送信していません。');return;}
@@ -74,7 +89,7 @@ $('push-remote-test').addEventListener('click',async()=>{
  busy=true;paint();
  remoteMessage('専用サーバーに接続テストを1回依頼しています。iPhoneへの配信完了はまだ確認できていません。');
  try{
-   const response=await oneTimeTest({code});
+   const response=await secondDisplayTest({code});
    if(response.alreadyAttempted)remoteMessage('この接続テストはすでに処理されています。重複送信は行いません。');
    else if(response.accepted)remoteMessage('サーバーは1回の送信を受理しました。実際にiPhoneに届いたか確認してください。');
    else remoteMessage('送信結果を確認できません。自動再送は行いません。');
