@@ -10,8 +10,8 @@ async function screen({standalone=true,permission='granted',health=true}={}){
  const manager={subscribe:async()=>({})};
  const reg={pushManager:manager,update:async()=>{}};
  const navigator={userAgent:'Mozilla iPhone',standalone,serviceWorker:{register:async()=>reg}};
- const window={isSecureContext:true,matchMedia:()=>({matches:standalone}),addEventListener(){}};
  const Notification={permission};
+ const window={isSecureContext:true,Notification,matchMedia:()=>({matches:standalone}),addEventListener(){}};
  let count=0,received=null;
  evaluate(document,navigator,window,Notification,async()=>{if(!health)throw Error('ENROLLMENT_UNAVAILABLE');return new Uint8Array(65)},async args=>{count++;received=args;return {registered:true}},async()=>({localRevoked:true,serverConfirmed:true}));
  await new Promise(r=>setImmediate(r));
