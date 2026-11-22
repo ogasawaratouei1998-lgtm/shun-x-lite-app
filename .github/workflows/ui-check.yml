@@ -43,12 +43,12 @@ jobs:
           set -eu
           base='https://ogasawaratouei1998-lgtm.github.io/shun-x-lite-app'
           for n in $(seq 1 18); do
-            if curl -fsSL --retry 1 "$base/index.html" | grep -q 'enrollment.js?v=6'; then break; fi
+            if curl -fsSL --retry 1 "$base/index.html" | grep -q 'enrollment.js?v=7'; then break; fi
             if [ "$n" = 18 ]; then echo 'PAGES_UPDATE_MISSING'; exit 1; fi
             sleep 5
           done
           curl -fsSL --retry 2 "$base/enrollment.js" | grep -q 'browser-registration.js'
-          curl -fsSL --retry 2 "$base/sw.js" | grep -q 'shunx-pages-preview-v6'
+          curl -fsSL --retry 2 "$base/sw.js" | grep -q 'shunx-pages-preview-v7'
           curl -fsSL --retry 2 "$base/boot.js" | grep -q 'shunxEnrollmentBooted'
           curl -fsSI --retry 2 "$base/browser-registration.js" | tr -d '\r' | grep -Ei '^content-type: *(text/javascript|application/javascript|application/x-javascript)' >/dev/null
           echo 'DEPLOYED_PWA_V6_VERIFIED: source loaded; no backend registration attempted'

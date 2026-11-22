@@ -1,13 +1,27 @@
 // Standalone classic-script fallback: controls must explain failures even if modules fail to load.
 (function(){
  function start(){
+  const reload=document.getElementById('reload-app');
+  if(reload)reload.addEventListener('click',async()=>{
+    reload.disabled=true;reload.textContent='更新を確認しています';
+    try{const registration=await navigator.serviceWorker?.getRegistration();await registration?.update();}catch{}
+    window.location.assign('./?app=v7');
+  });
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.addEventListener('controllerchange',()=>{
+      const code=document.getElementById('pairing-code');
+      if(code?.value){if(reload)reload.textContent='新版があります。入力後に更新';return;}
+      if(!window.__shunxControllerReloaded){window.__shunxControllerReloaded=true;window.location.reload();}
+    });
+    navigator.serviceWorker.getRegistration().then(registration=>registration?.update()).catch(()=>{});
+  }
   const status=document.getElementById('enroll-status');
   if(!status)return;
   const report=()=>{
    if(window.__shunxEnrollmentBooted===true)return;
    status.textContent='通知画面のプログラムを読み込めません。アプリを一度終了して開き直してください。改善しない場合はSafariで最新版を開き、ホーム画面アプリを再起動してください。';
    const guidance=document.getElementById('enroll-guidance');
-   if(guidance)guidance.textContent='通知登録 v6 が未起動です。秘密情報は入力しないでください。';
+   if(guidance)guidance.textContent='通知登録 v7 が未起動です。秘密情報は入力しないでください。';
   };
   for(const id of ['push-prepare','push-enroll','push-remove']){
    const b=document.getElementById(id);

@@ -50,9 +50,11 @@ test('server closed remains visible without submitting enrollment',async()=>{
 });
 test('public shell matches versioned script, cache and module and exposes no server secrets',()=>{
  const html=load('index.html'),sw=load('sw.js');
- assert.match(html,/boot\.js/);assert.match(html,/enrollment\.js\?v=6/);
- assert.match(sw,/shunx-pages-preview-v6/);
+ assert.match(html,/boot\.js/);assert.match(html,/enrollment\.js\?v=7/);
+ assert.match(sw,/shunx-pages-preview-v7/);
  assert.match(sw,/browser-registration\.js/);
  assert.match(sw,/boot\.js/);
  for(const t of [html,sw,script,load('boot.js')])assert.doesNotMatch(t,/SHUNX_PUSH_SEED|SUPABASE_SERVICE_ROLE_KEY|SHUNX_PUSH_DISPATCH/);
 });
+
+test('iPhone form labels and actions have explicit block layout and versioned assets',()=>{const css=load('style.css'),html=load('index.html'),sw=load('sw.js');assert.match(css,/#settings \.panel label\{display:block/);assert.match(css,/#settings \.panel button\{display:block;width:100%/);assert.match(html,/アプリ版：v7/);assert.match(html,/id="reload-app"/);assert.match(html,/id="enable"/);assert.match(sw,/self\.skipWaiting\(\)/);});

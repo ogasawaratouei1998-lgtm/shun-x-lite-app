@@ -1,15 +1,15 @@
-import {prepare,register,unregister} from './browser-registration.js';
+import {prepare,register,unregister} from './browser-registration.js?v=7';
 window.__shunxEnrollmentBooted=true;
 const $=id=>document.getElementById(id);
 const iOS=/iPad|iPhone|iPod/.test(navigator.userAgent||'');
 const standalone=window.matchMedia?.('(display-mode: standalone)')?.matches===true || navigator.standalone===true;
 let reg=null,key=null,busy=false;
-let last='通知登録 v6 を読み込みました。通知サーバーと端末の状態を確認しています。';
+let last='通知登録 v7 を読み込みました。通知サーバーと端末の状態を確認しています。';
 function hint(){
  if(!window.isSecureContext)return 'HTTPSで開いてください。';
  if(!('serviceWorker' in navigator))return 'このブラウザーではService Workerが使用できません。';
- if(!('Notification' in window))return 'このブラウザーでは通知に対応していません。';
  if(iOS&&!standalone)return 'iPhoneではSafariで「ホーム画面に追加」したSHUN-X Liteから操作してください。';
+ if(!('Notification' in window))return 'このブラウザーでは通知に対応していません。';
  if(!reg)return '端末の通知基盤が準備できていません。アプリを一度終了して再起動してください。';
  if(!reg.pushManager)return 'この端末では遠隔通知を利用できません。iOSのバージョン・ホーム画面アプリを確認してください。';
  if(Notification.permission==='denied')return '端末側で通知が拒否されています。iPhoneの設定から許可してください。';
