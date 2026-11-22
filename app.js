@@ -26,6 +26,6 @@ function status(){
   $('enable').disabled=!supported||!registration||Notification.permission==='denied';
   $('test').disabled=!canTest(supported,Boolean(registration),supported?Notification.permission:'denied');
 }
-$('enable').addEventListener('click',async()=>{try{await Notification.requestPermission();}catch{ $('notice').textContent='通知許可の取得に失敗しました。'; }status();});
+$('enable').addEventListener('click',async()=>{try{await Notification.requestPermission();window.dispatchEvent(new Event('shunx-notification-permission-changed'));}catch{ $('notice').textContent='通知許可の取得に失敗しました。'; }status();});
 $('test').addEventListener('click',async()=>{try{if(!canTest(supported,Boolean(registration),Notification.permission))return;await registration.showNotification('SHUN-X Lite',{body:'端末内テスト通知です。本番の重要材料ではありません。',tag:'local-test',data:{path:'./'}});$('push-status').textContent='端末内テストを要求しました。実際の表示は端末で確認してください。';}catch{$('push-status').textContent='端末内テストに失敗しました。';}});
 status();if(supported){navigator.serviceWorker.register('./sw.js').then(()=>navigator.serviceWorker.ready).then(r=>{registration=r;status();}).catch(()=>{$('push-status').textContent='Service Workerを起動できません。';});}
