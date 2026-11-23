@@ -1,18 +1,24 @@
 {
   "name": "SHUN-X Lite",
-  "short_name": "SHUN-X Lite",
+  "short_name": "SHUN-X",
   "id": "./",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "lang": "ja",
-  "background_color": "#101826",
-  "theme_color": "#101826",
+  "background_color": "#090e16",
+  "theme_color": "#090e16",
   "icons": [
     {
       "src": "./icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png",
       "purpose": "any"
     }
   ]
