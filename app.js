@@ -34,7 +34,7 @@ function listSamples(){
 }
 if(isPublicPreview){
  $('mode').textContent='PUBLIC DEMO';
- $('notice').textContent='公開プレビュー：架空のサンプルのみ。本番株価・分析結果・通知には接続しません。';
+ $('notice').textContent='公開プレビュー：本番の投資分析データは未接続です。端末登録・遠隔通知の診断は「設定」から利用できます。';
  $('hero-state').textContent='公開デモ';
  $('hero-message').textContent='本人専用の本番分析データはここには表示しません。';
  $('bottleneck').textContent='公開プレビューでは本番のボトルネックを表示しません。';
