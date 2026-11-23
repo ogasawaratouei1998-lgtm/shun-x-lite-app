@@ -104,3 +104,14 @@ select{width:100%;min-height:44px;margin:7px 0 12px;border:1px solid #495362;bac
 #push-remote-test{background:linear-gradient(140deg,#413826,#242923);border-color:#9d865d;color:var(--gold-soft)}
 #remote-code{border-color:#9d865d}
 #diagnose-status,#remote-test-status{background:#1b252b;border:1px solid #4d594e;color:#d9e9de}
+
+/* Update health: separate network-verified version state from the BUY pipeline. */
+.update-summary{display:flex;flex-direction:column;gap:5px;min-width:0}
+#app-version{font-size:12px;color:#e9e3d9;font-weight:650}
+#update-status{font-size:11px;color:#b9c5cd;line-height:1.5;overflow-wrap:anywhere}
+#update-status[data-state="current"]{color:#a2d9ba}
+#update-status[data-state="available"]{color:#f1d09a}
+#update-status[data-state="error"]{color:#efb4a2}
+#update-status[data-state="checking"]{color:#a7b5c0}
+.update-row #reload-app{flex-shrink:0;border-color:#9a8055;background:#302c24;color:#f3ddb8}
+@media(max-width:390px){.update-row{align-items:stretch;flex-direction:column}.update-row #reload-app{width:100%}}
