@@ -50,7 +50,7 @@ test('server closed remains visible without submitting enrollment',async()=>{
 });
 test('public shell matches versioned script, cache and module and exposes no server secrets',()=>{
  const html=load('index.html'),sw=load('sw.js');
- assert.match(html,/boot\.js/);assert.match(html,/enrollment\.js\?v=12/);
+ assert.match(html,/boot\.js/);assert.match(html,/enrollment\.js\?v=13/);
  assert.match(sw,/shunx-pages-preview-v13/);
  assert.match(sw,/browser-registration\.js/);
  assert.match(sw,/boot\.js/);
