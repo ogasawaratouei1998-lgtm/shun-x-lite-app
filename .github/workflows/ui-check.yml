@@ -60,6 +60,8 @@ jobs:
           curl -fsSL --retry 2 "$base/icon.svg" | grep -q 'linearGradient'
           curl -fsSL --retry 2 "$base/sw.js" | grep -q 'shunx-pages-preview-v15'
           curl -fsSL --retry 2 "$base/boot.js" | grep -q 'shunxEnrollmentBooted'
+          curl -fsSL --retry 2 "$base/index.html" | grep -q 'id="screen-pin"'
+          curl -fsSL --retry 2 "$base/local-pin.js" | grep -q 'PBKDF2'
           curl -fsSL --retry 2 "$base/enrollment.js" | grep -q 'thirdDisplayTest'
           curl -fsSL --retry 2 "$base/index.html" | grep -q 'id="remote-code"'
           curl -fsSL --retry 2 "$base/index.html" | grep -q 'id="push-repair"'
