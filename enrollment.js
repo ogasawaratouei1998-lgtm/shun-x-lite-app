@@ -1,9 +1,9 @@
-import {prepare,register,unregister,recoverSubscription,thirdDisplayTest,inspectRemote} from './browser-registration.js?v=14';
+import {prepare,register,unregister,recoverSubscription,thirdDisplayTest,inspectRemote} from './browser-registration.js?v=15';
 const $=id=>document.getElementById(id);
 const iOS=/iPad|iPhone|iPod/.test(navigator.userAgent||'');
 const standalone=window.matchMedia?.('(display-mode: standalone)')?.matches===true || navigator.standalone===true;
 let reg=null,key=null,busy=false;
-let last='通知登録 v14 を読み込みました。通知サーバーと端末の状態を確認しています。';
+let last='通知登録 v15 を読み込みました。通知サーバーと端末の状態を確認しています。';
 function hint(){
  if(!window.isSecureContext)return 'HTTPSで開いてください。';
  if(!('serviceWorker' in navigator))return 'このブラウザーではService Workerが使用できません。';
@@ -71,7 +71,7 @@ $('push-repair').addEventListener('click',async()=>{
  if(!key){message('先に「通知サーバーの状態を確認」を押してください。復旧は実行していません。');return;}
  const code=$('pairing-code').value;
  if(!/^[A-Za-z0-9_-]{43}$/.test(code)){message('初回端末登録用コード欄に43文字のコードを入力してください。復旧は実行していません。');return;}
- busy=true;paint();message('このiPhoneのプッシュ購読を再作成し、本人認証付きでサーバーを更新しています。通知は送信しません。');
+ busy=true;paint();message('このiPhoneのプッシュ購読を再作成し、登録コードを使ってサーバーの購読を更新しています。通知は送信しません。');
  try{
   await recoverSubscription({manager:reg.pushManager,key,code,permission:Notification.permission});
   message('復旧登録が完了しました。手順3の診断で購読ありを確認し、手順4で登録照合してください。通知はまだ送信していません。');

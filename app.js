@@ -36,13 +36,13 @@ if(isPublicPreview){
  $('mode').textContent='PUBLIC DEMO';
  $('notice').textContent='公開プレビュー：本番の投資分析データは未接続です。端末登録・遠隔通知の診断は「設定」から利用できます。';
  $('hero-state').textContent='公開デモ';
- $('hero-message').textContent='本人専用の本番分析データはここには表示しません。';
+ $('hero-message').textContent='非公開の本番分析データはここには表示しません。';
  $('bottleneck').textContent='公開プレビューでは本番のボトルネックを表示しません。';
  $('companies').replaceChildren();
  $('query').addEventListener('input',listSamples);
  listSamples();
 }else{
- $('companies').textContent='本人認証後に最新の評価記録を表示します。';
+ $('companies').textContent='公開版は本番研究データに接続していません。';
 }
 let registration;
 const supported=window.isSecureContext&&'serviceWorker' in navigator&&'Notification' in window;

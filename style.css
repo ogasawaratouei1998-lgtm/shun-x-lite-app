@@ -115,3 +115,20 @@ select{width:100%;min-height:44px;margin:7px 0 12px;border:1px solid #495362;bac
 #update-status[data-state="checking"]{color:#a7b5c0}
 .update-row #reload-app{flex-shrink:0;border-color:#9a8055;background:#302c24;color:#f3ddb8}
 @media(max-width:390px){.update-row{align-items:stretch;flex-direction:column}.update-row #reload-app{width:100%}}
+
+/* Local convenience lock: never a server-side identity barrier */
+.local-lock-shell:not(.pin-unlocked) main,
+.local-lock-shell:not(.pin-unlocked) .bottom-nav{visibility:hidden}
+.screen-lock{position:fixed;inset:0;z-index:100;background:radial-gradient(circle at 50% 2%,#293039 0,transparent 63%),#090e16;overflow:auto;display:flex;align-items:center;justify-content:center;padding:calc(30px + env(safe-area-inset-top)) 18px calc(28px + env(safe-area-inset-bottom))}
+.screen-lock[hidden]{display:none!important}
+.screen-lock-inner{width:min(100%,385px);text-align:center;background:linear-gradient(150deg,#1a232c,#101720);border:1px solid #66563b;border-radius:23px;padding:31px 22px;box-shadow:0 25px 75px #0009}
+.screen-lock-icon{display:block;margin:0 auto 19px;border-radius:20px}
+.screen-lock h2{font-size:29px;letter-spacing:-.04em;margin:11px 0}
+.screen-lock label{display:block;text-align:left;margin:19px 0 4px;color:var(--gold-soft)}
+.screen-lock input{display:block;max-width:270px;margin:8px auto 13px;height:58px;font-size:26px;letter-spacing:.75em;font-family:ui-monospace,monospace;text-align:center;padding-left:16px}
+.screen-lock input::placeholder{letter-spacing:.32em;color:#6d7280}
+.screen-lock #screen-pin-status{min-height:42px;color:#b9c3cb}
+.screen-lock #screen-pin-status[data-state=error]{color:#e7a199}
+.screen-lock #screen-pin-submit{width:100%}
+.screen-lock #screen-pin-reset{margin:7px auto;display:block}
+.screen-lock-footnote{font-size:10px!important;color:#84909d!important;line-height:1.7;margin:19px 0 0}
