@@ -1,8 +1,9 @@
 // Public SHUN-X Lite PWA: only a generic material-alert banner, never confidential research.
-const CACHE='shunx-pages-preview-v18';
-const SHELL=['./','./index.html','./style.css?v=18','./app.js?v=18','./boot.js?v=18','./local-pin.js?v=18','./model.js','./enrollment.js?v=18','./browser-registration.js?v=18','./manifest.webmanifest','./icon.svg','./icon-180.png'];
+const CACHE='shunx-pages-preview-v19';
+const SHELL=['./','./index.html','./style.css?v=19','./app.js?v=19','./boot.js?v=19','./local-pin.js?v=19','./model.js','./enrollment.js?v=19','./browser-registration.js?v=19','./manifest.webmanifest','./icon.svg','./icon-180.png'];
 const APP_HOME='https://ogasawaratouei1998-lgtm.github.io/shun-x-lite-app/';
 const MATERIAL_TAG='shunx-material-alert-v1';
+const APPROVAL_TAG='shunx-improvement-approval-v1';
 const TEST_TAGS=new Set(['shunx-remote-connectivity-v2','shunx-remote-connectivity-v3']);
 
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL)).then(()=>self.skipWaiting())));
@@ -13,6 +14,13 @@ self.addEventListener('push',event=>{
  let p;try{p=event.data?.json();}catch{return;}
  const n=p?.notification;
  if(p?.web_push===8030&&n?.title==='SHUN-X Lite'&&n?.navigate===APP_HOME&&n?.silent===false){
+  if(n.tag===APPROVAL_TAG){
+   event.waitUntil(self.registration.showNotification('SHUN-X Lite',{
+    body:'確認が必要な改善案があります。アプリで内容をご確認ください。',
+    tag:APPROVAL_TAG,renotify:false,data:{path:'./#approvals',kind:'IMPROVEMENT_APPROVAL_REQUIRED'}
+   }));
+   return;
+  }
   if(n.tag===MATERIAL_TAG){
    // Do NOT render push-supplied text, ticker or valuations on an unlocked screen.
    event.waitUntil(self.registration.showNotification('SHUN-X Lite',{
@@ -45,17 +53,19 @@ self.addEventListener('notificationclick',event=>{
  event.waitUntil((async()=>{
   // WebKit declarative notifications may omit custom data on click.
   const material=event.notification.tag===MATERIAL_TAG;
-  const url=new URL(material?'./#alerts':'./',self.registration.scope).href;
+  const approval=event.notification.tag===APPROVAL_TAG;
+  const url=new URL(approval?'./#approvals':material?'./#alerts':'./',self.registration.scope).href;
+  const instruction=approval?'SHUNX_OPEN_APPROVALS':'SHUNX_OPEN_ALERTS';
   const clients=await self.clients.matchAll({type:'window',includeUncontrolled:true});
   const client=clients.find(c=>c.url.startsWith(self.registration.scope));
   if(client){
-   if(material){
+   if(material||approval){
     // Prefer navigation so the installed app opens the alert section after PIN unlock.
     try{
      if(typeof client.navigate!=='function'||!await client.navigate(url)){
-      if(typeof client.postMessage==='function')client.postMessage({type:'SHUNX_OPEN_ALERTS'});
+      if(typeof client.postMessage==='function')client.postMessage({type:instruction});
      }
-    }catch{if(typeof client.postMessage==='function')client.postMessage({type:'SHUNX_OPEN_ALERTS'});}
+    }catch{if(typeof client.postMessage==='function')client.postMessage({type:instruction});}
    }
    await client.focus();
    return;
