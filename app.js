@@ -12,6 +12,22 @@ function page(name){
 }
 document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>page(b.dataset.page)));
 document.querySelectorAll('[data-page-link]').forEach(b=>b.addEventListener('click',()=>page(b.dataset.pageLink)));
+function openMaterialAlertSection(){
+ if(window.location?.hash!=='#alerts')return;
+ page('alerts');
+ // A public notification shell cannot reveal the owner's private valuations.
+ if(isPublicPreview)$('alerts-summary').textContent='重要通知から開きました。この公開プレビューでは非公開の分析詳細を閲覧できません。認証済みの分析画面が必要です。';
+}
+window.addEventListener?.('hashchange',openMaterialAlertSection);
+if('serviceWorker' in navigator){
+ navigator.serviceWorker.addEventListener?.('message',event=>{
+  if(event.data?.type==='SHUNX_OPEN_ALERTS'){
+   page('alerts');
+   if(isPublicPreview)$('alerts-summary').textContent='重要通知から開きました。非公開の分析詳細はこの公開プレビューに表示されません。';
+  }
+ });
+}
+openMaterialAlertSection();
 function sampleDetail(c){
  const box=$('details');box.replaceChildren();box.hidden=false;
  const h=document.createElement('h3');h.textContent=c.name+'（架空サンプル）';box.append(h);
