@@ -43,15 +43,19 @@ self.addEventListener('push',event=>{
 self.addEventListener('notificationclick',event=>{
  event.notification.close();
  event.waitUntil((async()=>{
-  const material=event.notification.tag===MATERIAL_TAG&&event.notification.data?.path==='./#alerts';
+  // WebKit declarative notifications may omit custom data on click.
+  const material=event.notification.tag===MATERIAL_TAG;
   const url=new URL(material?'./#alerts':'./',self.registration.scope).href;
   const clients=await self.clients.matchAll({type:'window',includeUncontrolled:true});
   const client=clients.find(c=>c.url.startsWith(self.registration.scope));
   if(client){
    if(material){
     // Prefer navigation so the installed app opens the alert section after PIN unlock.
-    try{if(typeof client.navigate==='function')await client.navigate(url);}
-    catch{if(typeof client.postMessage==='function')client.postMessage({type:'SHUNX_OPEN_ALERTS'});}
+    try{
+     if(typeof client.navigate!=='function'||!await client.navigate(url)){
+      if(typeof client.postMessage==='function')client.postMessage({type:'SHUNX_OPEN_ALERTS'});
+     }
+    }catch{if(typeof client.postMessage==='function')client.postMessage({type:'SHUNX_OPEN_ALERTS'});}
    }
    await client.focus();
    return;
