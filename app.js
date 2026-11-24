@@ -51,12 +51,18 @@ function listSamples(){
 if(isPublicPreview){
  $('mode').textContent='PUBLIC DEMO';
  $('notice').textContent='公開プレビュー：本番の投資分析データは未接続です。端末登録・遠隔通知の診断は「設定」から利用できます。';
- $('hero-state').textContent='公開デモ';
- $('hero-message').textContent='非公開の本番分析データはここには表示しません。';
- $('bottleneck').textContent='公開プレビューでは本番のボトルネックを表示しません。';
+ $('hero-state').textContent='本体の実行記録を確認可能';
+ $('hero-message').textContent='日次・週次の実行記録に接続できます。アプリ内の非公開データ表示は未接続です。';
+ $('bottleneck').textContent='上の稼働・自己改善リンクから、最新の実行結果と改善課題を確認してください。';
  $('companies').replaceChildren();
  $('query').addEventListener('input',listSamples);
- listSamples();
+ $('toggle-demo').addEventListener('click',()=>{
+  const show=$('demo-research').hidden;
+  $('demo-research').hidden=!show;
+  $('toggle-demo').setAttribute('aria-expanded',String(show));
+  $('toggle-demo').textContent=show?'架空サンプルを閉じる':'架空サンプルを表示（操作確認用）';
+  if(show)listSamples();
+ });
 }else{
  $('companies').textContent='公開版は本番研究データに接続していません。';
 }
