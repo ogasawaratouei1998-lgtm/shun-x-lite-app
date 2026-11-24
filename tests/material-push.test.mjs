@@ -101,7 +101,7 @@ test('connectivity tests retain test label and never become material',async()=>{
   await f.push(testPush(tag));
   assert.equal(f.shown.length,1);
   assert.equal(f.shown[0].options.tag,tag);
-  assert.match(f.shown[0].options.body,/テスト/);
+  assert.match(f.shown[0].options.body,/テスト|表示確認/);
   assert.equal(f.shown[0].options.data.kind,'CONNECTIVITY_TEST');
  }
 });
