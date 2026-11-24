@@ -4,7 +4,7 @@ import vm from 'node:vm';
 import {readFileSync} from 'node:fs';
 const load=name=>readFileSync(new URL('../'+name,import.meta.url),'utf8');
 
-async function screen({server=15,code='',failFetch=false,failWorker=false}={}){
+async function screen({server=16,code='',failFetch=false,failWorker=false}={}){
  const events={},requests=[],navigation=[];
  const elements={
   'reload-app':{disabled:false,textContent:'',callbacks:{},addEventListener(type,fn){this.callbacks[type]=fn;}},
@@ -30,7 +30,7 @@ async function screen({server=15,code='',failFetch=false,failWorker=false}={}){
 }
 test('startup checks current version online, no automatic reload or push changes',async()=>{
  const s=await screen();
- assert.equal(s.elements['app-version'].textContent,'アプリ版：v15');
+ assert.equal(s.elements['app-version'].textContent,'アプリ版：v16');
  assert.match(s.elements['update-status'].textContent,/最新版です/);
  assert.equal(s.elements['update-status'].dataset.state,'current');
  assert.equal(s.workerUpdates(),0);assert.deepEqual(s.navigation,[]);
@@ -40,15 +40,15 @@ test('startup checks current version online, no automatic reload or push changes
  assert.equal(s.requests[0].options.credentials,'omit');
 });
 test('new server version displays update and installs only on explicit tap',async()=>{
- const s=await screen({server:16});
- assert.match(s.elements['update-status'].textContent,/新しいv16/);
+ const s=await screen({server:17});
+ assert.match(s.elements['update-status'].textContent,/新しいv17/);
  assert.equal(s.elements['update-status'].dataset.state,'available');
  assert.equal(s.workerUpdates(),0);assert.deepEqual(s.navigation,[]);
  await s.tap();
- assert.equal(s.workerUpdates(),1);assert.deepEqual(s.navigation,['./?app=v16']);
+ assert.equal(s.workerUpdates(),1);assert.deepEqual(s.navigation,['./?app=v17']);
 });
 test('active pairing code defers updating without losing registration state',async()=>{
- const s=await screen({server:16,code:'A'.repeat(43)});
+ const s=await screen({server:17,code:'A'.repeat(43)});
  await s.tap();
  assert.equal(s.workerUpdates(),0);assert.deepEqual(s.navigation,[]);
  assert.match(s.elements['update-status'].textContent,/登録コードが入力中/);
@@ -65,7 +65,7 @@ test('stale server version is not mislabeled as newest',async()=>{
  assert.match(s.elements['update-status'].textContent,/判定できません/);
 });
 test('failed worker update does not navigate or report success',async()=>{
- const s=await screen({server:16,failWorker:true});
+ const s=await screen({server:17,failWorker:true});
  await s.tap();
  assert.equal(s.workerUpdates(),1);
  assert.equal(s.elements['update-status'].dataset.state,'error');
@@ -74,11 +74,11 @@ test('failed worker update does not navigate or report success',async()=>{
 test('remote push receiver, install scope, CSP and uncached version endpoint are preserved',()=>{
  const html=load('index.html'),sw=load('sw.js'),metadata=JSON.parse(load('version.json'));
  const manifest=JSON.parse(load('manifest.webmanifest'));
- assert.deepEqual(metadata,{app:'shun-x-lite-app',version:15});
+ assert.deepEqual(metadata,{app:'shun-x-lite-app',version:16});
  assert.match(html,/id="update-status"/);
  assert.match(html,/connect-src 'self' https:\/\/kdvkbkdfnrwvrbugpnaq\.supabase\.co\/functions\/v1\/shunx-push\//);
- assert.match(html,/enrollment\.js\?v=15/);
- assert.match(sw,/shunx-pages-preview-v15/);
+ assert.match(html,/enrollment\.js\?v=16/);
+ assert.match(sw,/shunx-pages-preview-v16/);
  assert.doesNotMatch(sw,/SHELL=\[[^\]]*version\.json/);
  assert.match(sw,/web_push===8030/);assert.match(sw,/REMOTE_CONNECTIVITY_TEST/);
  assert.equal(manifest.id,'./');assert.equal(manifest.start_url,'./');assert.equal(manifest.scope,'./');
