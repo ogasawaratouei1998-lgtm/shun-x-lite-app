@@ -2,10 +2,10 @@ import {filterSamples,canTest} from './model.js';
 const $=id=>document.getElementById(id);
 const isPublicPreview=!document.querySelector('script[src="./account.js"]');
 function page(name){
- if(!['home','research','operations','alerts','settings'].includes(name))return;
- for(const id of ['home','research','operations','alerts','settings'])$(id).hidden=id!==name;
+ if(!['home','research','operations','approvals','alerts','settings'].includes(name))return;
+ for(const id of ['home','research','operations','approvals','alerts','settings'])$(id).hidden=id!==name;
  for(const b of document.querySelectorAll('nav button')){
-  if(b.dataset.page===name)b.setAttribute('aria-current','page');
+  if(b.dataset.page===name||(name==='approvals'&&b.dataset.page==='operations'))b.setAttribute('aria-current','page');
   else b.removeAttribute('aria-current');
  }
  window.scrollTo?.({top:0,behavior:'instant'});
@@ -19,6 +19,7 @@ function operationTab(name){
 document.querySelectorAll('[data-op-tab]').forEach(b=>b.addEventListener('click',()=>operationTab(b.dataset.opTab)));
 document.querySelectorAll('[data-page-link]').forEach(b=>b.addEventListener('click',()=>{page(b.dataset.pageLink);if(b.dataset.operationTarget)operationTab(b.dataset.operationTarget);}));
 function openMaterialAlertSection(){
+ if(window.location?.hash==='#approvals'){page('approvals');return;}
  if(window.location?.hash!=='#alerts')return;
  page('alerts');
  // A public notification shell cannot reveal the owner's private valuations.
@@ -27,6 +28,7 @@ function openMaterialAlertSection(){
 window.addEventListener?.('hashchange',openMaterialAlertSection);
 if('serviceWorker' in navigator){
  navigator.serviceWorker.addEventListener?.('message',event=>{
+  if(event.data?.type==='SHUNX_OPEN_APPROVALS'){page('approvals');return;}
   if(event.data?.type==='SHUNX_OPEN_ALERTS'){
    page('alerts');
    if(isPublicPreview)$('alerts-summary').textContent='重要通知から開きました。非公開の分析詳細はこの公開プレビューに表示されません。';
@@ -34,6 +36,11 @@ if('serviceWorker' in navigator){
  });
 }
 openMaterialAlertSection();
+const demoLabels=Object.freeze({approve:'承認',defer:'保留',reject:'却下'});
+document.querySelectorAll('[data-demo-decision]').forEach(b=>b.addEventListener('click',()=>{
+ const label=demoLabels[b.dataset.demoDecision];
+ if(label)$('approval-demo-result').textContent='操作練習：'+label+'を選択しました。本番への送信・保存・反映はありません。';
+}));
 function sampleDetail(c){
  const box=$('details');box.replaceChildren();box.hidden=false;
  const h=document.createElement('h3');h.textContent=c.name+'（架空サンプル）';box.append(h);

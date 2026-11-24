@@ -10,7 +10,7 @@ function fixture({hasClient=true,canNavigate=true}={}){
  const handlers={},shown=[],windows=[],navigations=[],messages=[];
  let focuses=0;
  const client={
-  url:ROOT+'?app=v18',
+  url:ROOT+'?app=v19',
   async navigate(url){if(!canNavigate)throw Error('NAVIGATION_BLOCKED');navigations.push(url);return this;},
   async focus(){focuses++;return this;},
   postMessage(v){messages.push(v);}
@@ -136,3 +136,6 @@ test('app exposes alert-route handler but no public valuation API',()=>{
  assert.match(app,/SHUNX_OPEN_ALERTS/);
  assert.doesNotMatch(app,/fetch\('\/api\/research|service_role|SUPABASE_SERVICE_ROLE_KEY/);
 });
+
+test('approval notice uses distinct fixed text and only opens approval route',async()=>{const f=fixture();await f.push(material({tag:'shunx-improvement-approval-v1',body:'secret proposal'}));assert.equal(f.shown.length,1);assert.equal(f.shown[0].options.data.kind,'IMPROVEMENT_APPROVAL_REQUIRED');assert.doesNotMatch(f.shown[0].options.body,/secret proposal/);await f.click({tag:'shunx-improvement-approval-v1'});assert.deepEqual(f.navigations,[ROOT+'#approvals']);});
+test('approval click navigation fallback never executes approval',async()=>{const f=fixture({canNavigate:false});await f.click({tag:'shunx-improvement-approval-v1'});assert.equal(f.messages[0].type,'SHUNX_OPEN_APPROVALS');});
