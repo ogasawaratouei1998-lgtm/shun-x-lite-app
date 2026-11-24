@@ -48,7 +48,7 @@ test('new server version displays update and installs only on explicit tap',asyn
  assert.equal(s.workerUpdates(),1);assert.deepEqual(s.navigation,['./?app=v17']);
 });
 test('active pairing code defers updating without losing registration state',async()=>{
- const s=await screen({server:16,code:'A'.repeat(43)});
+ const s=await screen({server:17,code:'A'.repeat(43)});
  await s.tap();
  assert.equal(s.workerUpdates(),0);assert.deepEqual(s.navigation,[]);
  assert.match(s.elements['update-status'].textContent,/登録コードが入力中/);
@@ -65,7 +65,7 @@ test('stale server version is not mislabeled as newest',async()=>{
  assert.match(s.elements['update-status'].textContent,/判定できません/);
 });
 test('failed worker update does not navigate or report success',async()=>{
- const s=await screen({server:16,failWorker:true});
+ const s=await screen({server:17,failWorker:true});
  await s.tap();
  assert.equal(s.workerUpdates(),1);
  assert.equal(s.elements['update-status'].dataset.state,'error');
