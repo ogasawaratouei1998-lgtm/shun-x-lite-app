@@ -2,8 +2,8 @@ import {filterSamples,canTest} from './model.js';
 const $=id=>document.getElementById(id);
 const isPublicPreview=!document.querySelector('script[src="./account.js"]');
 function page(name){
- if(!['home','research','alerts','settings'].includes(name))return;
- for(const id of ['home','research','alerts','settings'])$(id).hidden=id!==name;
+ if(!['home','research','operations','alerts','settings'].includes(name))return;
+ for(const id of ['home','research','operations','alerts','settings'])$(id).hidden=id!==name;
  for(const b of document.querySelectorAll('nav button')){
   if(b.dataset.page===name)b.setAttribute('aria-current','page');
   else b.removeAttribute('aria-current');
@@ -11,7 +11,13 @@ function page(name){
  window.scrollTo?.({top:0,behavior:'instant'});
 }
 document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>page(b.dataset.page)));
-document.querySelectorAll('[data-page-link]').forEach(b=>b.addEventListener('click',()=>page(b.dataset.pageLink)));
+function operationTab(name){
+ if(!['universe','pipeline','improve'].includes(name))return;
+ for(const b of document.querySelectorAll('[data-op-tab]'))b.setAttribute('aria-pressed',String(b.dataset.opTab===name));
+ for(const p of document.querySelectorAll('[data-op-panel]'))p.hidden=p.dataset.opPanel!==name;
+}
+document.querySelectorAll('[data-op-tab]').forEach(b=>b.addEventListener('click',()=>operationTab(b.dataset.opTab)));
+document.querySelectorAll('[data-page-link]').forEach(b=>b.addEventListener('click',()=>{page(b.dataset.pageLink);if(b.dataset.operationTarget)operationTab(b.dataset.operationTarget);}));
 function openMaterialAlertSection(){
  if(window.location?.hash!=='#alerts')return;
  page('alerts');
@@ -37,6 +43,16 @@ function sampleDetail(c){
   const amount=document.createElement('b');amount.textContent=value;
   row.append(label,amount);box.append(row);
  }
+ const chart=document.createElement('section');chart.className='valuation-chart';
+ const title=document.createElement('h4');title.textContent='価格と評価額の比較（架空）';chart.append(title);
+ const max=Math.max(c.price,c.per,c.dcf,c.limit);
+ for(const [name,value] of [['株価',c.price],['購入検討上限',c.limit],['PER参考値',c.per],['DCF参考値',c.dcf]]){
+  const line=document.createElement('div');line.className='chart-line';
+  const label=document.createElement('span');label.textContent=name+' '+value.toLocaleString('ja-JP')+'円';
+  const bar=document.createElement('meter');bar.min=0;bar.max=max;bar.value=value;bar.setAttribute('aria-label',label.textContent);line.append(label,bar);chart.append(line);
+ }
+ box.append(chart);
+ const close=document.createElement('button');close.type='button';close.textContent='詳細を閉じる';close.className='detail-close';close.addEventListener('click',()=>{box.hidden=true;$('query').focus();});box.append(close);
  const warning=document.createElement('p');warning.textContent='公開プレビュー専用の架空データです。実際の投資判断には使えません。';box.append(warning);
 }
 function listSamples(){
@@ -44,16 +60,16 @@ function listSamples(){
  for(const c of filterSamples($('query').value)){
   const item=document.createElement('button');item.type='button';item.className='company';
   const h=document.createElement('b');h.textContent=c.name;const s=document.createElement('span');s.textContent=c.code+' / 架空サンプル';
-  item.append(h,s);item.addEventListener('click',()=>sampleDetail(c));box.append(item);
+  item.append(h,s);item.addEventListener('click',()=>{sampleDetail(c);$('details').scrollIntoView?.({block:'start'});});box.append(item);
  }
  if(!box.children.length)box.textContent='該当する架空サンプルはありません。';
 }
 if(isPublicPreview){
  $('mode').textContent='PUBLIC DEMO';
  $('notice').textContent='公開プレビュー：本番の投資分析データは未接続です。端末登録・遠隔通知の診断は「設定」から利用できます。';
- $('hero-state').textContent='本体の実行記録を確認可能';
+ $('hero-state').textContent='リサーチ端末';
  $('hero-message').textContent='日次・週次の実行記録に接続できます。アプリ内の非公開データ表示は未接続です。';
- $('bottleneck').textContent='上の稼働・自己改善リンクから、最新の実行結果と改善課題を確認してください。';
+ $('bottleneck').textContent='稼働・改善画面から、最新の実行結果と改善課題を確認してください。';
  $('companies').replaceChildren();
  $('query').addEventListener('input',listSamples);
  $('toggle-demo').addEventListener('click',()=>{
