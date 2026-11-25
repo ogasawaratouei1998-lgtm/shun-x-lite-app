@@ -101,7 +101,7 @@ test('premium preview retains every existing notification operation and hides pr
    assert.ok(html.includes('id="'+id+'"'),'missing '+id);
  }
  assert.match(html,/銘柄選別・分析の進捗/);
- assert.match(html,/本番の銘柄評価は未接続/);
+ assert.match(html,/個別銘柄の評価・株価は非公開/);
  assert.match(html,/アプリ版：v23/);
  assert.doesNotMatch(html,/src="\.\/account\.js"/);
  assert.doesNotMatch(app,/\/api\/research|fetch\('\/api\//);
