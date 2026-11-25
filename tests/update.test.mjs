@@ -4,7 +4,7 @@ import vm from 'node:vm';
 import {readFileSync} from 'node:fs';
 const load=name=>readFileSync(new URL('../'+name,import.meta.url),'utf8');
 
-async function screen({server=22,code='',failFetch=false,failWorker=false,hash=''}={}){
+async function screen({server=23,code='',failFetch=false,failWorker=false,hash=''}={}){
  const events={},requests=[],navigation=[];
  const elements={
   'reload-app':{disabled:false,textContent:'',callbacks:{},addEventListener(type,fn){this.callbacks[type]=fn;}},
@@ -30,7 +30,7 @@ async function screen({server=22,code='',failFetch=false,failWorker=false,hash='
 }
 test('startup checks current version online, no automatic reload or push changes',async()=>{
  const s=await screen();
- assert.equal(s.elements['app-version'].textContent,'アプリ版：v22');
+ assert.equal(s.elements['app-version'].textContent,'アプリ版：v23');
  assert.match(s.elements['update-status'].textContent,/最新版です/);
  assert.equal(s.elements['update-status'].dataset.state,'current');
  assert.equal(s.workerUpdates(),0);assert.deepEqual(s.navigation,[]);
@@ -40,15 +40,15 @@ test('startup checks current version online, no automatic reload or push changes
  assert.equal(s.requests[0].options.credentials,'omit');
 });
 test('new server version displays update and installs only on explicit tap',async()=>{
- const s=await screen({server:23});
- assert.match(s.elements['update-status'].textContent,/新しいv23/);
+ const s=await screen({server:24});
+ assert.match(s.elements['update-status'].textContent,/新しいv24/);
  assert.equal(s.elements['update-status'].dataset.state,'available');
  assert.equal(s.workerUpdates(),0);assert.deepEqual(s.navigation,[]);
  await s.tap();
- assert.equal(s.workerUpdates(),1);assert.deepEqual(s.navigation,['./?app=v23']);
+ assert.equal(s.workerUpdates(),1);assert.deepEqual(s.navigation,['./?app=v24']);
 });
 test('active pairing code defers updating without losing registration state',async()=>{
- const s=await screen({server:23,code:'A'.repeat(43)});
+ const s=await screen({server:24,code:'A'.repeat(43)});
  await s.tap();
  assert.equal(s.workerUpdates(),0);assert.deepEqual(s.navigation,[]);
  assert.match(s.elements['update-status'].textContent,/登録コードが入力中/);
@@ -65,7 +65,7 @@ test('stale server version is not mislabeled as newest',async()=>{
  assert.match(s.elements['update-status'].textContent,/判定できません/);
 });
 test('failed worker update does not navigate or report success',async()=>{
- const s=await screen({server:23,failWorker:true});
+ const s=await screen({server:24,failWorker:true});
  await s.tap();
  assert.equal(s.workerUpdates(),1);
  assert.equal(s.elements['update-status'].dataset.state,'error');
@@ -74,11 +74,11 @@ test('failed worker update does not navigate or report success',async()=>{
 test('remote push receiver, install scope, CSP and uncached version endpoint are preserved',()=>{
  const html=load('index.html'),sw=load('sw.js'),metadata=JSON.parse(load('version.json'));
  const manifest=JSON.parse(load('manifest.webmanifest'));
- assert.deepEqual(metadata,{app:'shun-x-lite-app',version:22});
+ assert.deepEqual(metadata,{app:'shun-x-lite-app',version:23});
  assert.match(html,/id="update-status"/);
  assert.match(html,/connect-src 'self' https:\/\/kdvkbkdfnrwvrbugpnaq\.supabase\.co\/functions\/v1\/shunx-push\//);
- assert.match(html,/enrollment\.js\?v=22/);
- assert.match(sw,/shunx-pages-preview-v22/);
+ assert.match(html,/enrollment\.js\?v=23/);
+ assert.match(sw,/shunx-pages-preview-v23/);
  assert.doesNotMatch(sw,/SHELL=\[[^\]]*version\.json/);
  assert.match(sw,/web_push===8030/);assert.match(sw,/REMOTE_CONNECTIVITY_TEST/);
  assert.equal(manifest.id,'./');assert.equal(manifest.start_url,'./');assert.equal(manifest.scope,'./');
@@ -86,7 +86,7 @@ test('remote push receiver, install scope, CSP and uncached version endpoint are
 
 test('explicit update preserves notification and approval routes only',async()=>{
  for(const hash of ['#alerts','#approvals','#unexpected']){
-  const s=await screen({server:23,hash});await s.tap();
-  assert.deepEqual(s.navigation,['./?app=v23'+(hash==='#unexpected'?'':hash)]);
+  const s=await screen({server:24,hash});await s.tap();
+  assert.deepEqual(s.navigation,['./?app=v24'+(hash==='#unexpected'?'':hash)]);
  }
 });

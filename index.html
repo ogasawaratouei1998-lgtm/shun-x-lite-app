@@ -12,11 +12,12 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" type="image/svg+xml" href="./icon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="./icon-180.png">
-<link rel="stylesheet" href="./style.css?v=22">
-<script defer src="./boot.js?v=22"></script>
-<script type="module" src="./local-pin.js?v=22"></script>
-<script type="module" src="./app.js?v=22"></script>
-<script type="module" src="./enrollment.js?v=22"></script>
+<link rel="stylesheet" href="./style.css?v=23">
+<script defer src="./boot.js?v=23"></script>
+<script type="module" src="./local-pin.js?v=23"></script>
+<script type="module" src="./app.js?v=23"></script>
+<script type="module" src="./progress.mjs?v=23"></script>
+<script type="module" src="./enrollment.js?v=23"></script>
 
 </head>
 <body class="local-lock-shell">
@@ -44,29 +45,27 @@
  <div><span class="eyebrow">企業価値評価ダッシュボード</span><h1>SHUN<span class="gold">—X</span><small> LITE</small></h1></div></div>
  <span class="pill" id="mode">プレビュー</span>
 </header>
-<p class="banner" id="notice" role="status">公開プレビュー：本番の銘柄評価は未接続です。通知登録・端末診断の機能は維持しています。</p>
-<div class="update-row"><div class="update-summary"><span id="app-version">アプリ版：v22</span><span id="update-status" role="status" aria-live="polite" data-state="checking">配信情報を確認中…</span></div><button id="reload-app" type="button">最新版を確認</button></div>
+<p class="banner" id="notice" role="status">公開可能な進捗集計のみ表示します。個別銘柄の評価・株価は非公開です。</p>
+<div class="update-row"><div class="update-summary"><span id="app-version">アプリ版：v23</span><span id="update-status" role="status" aria-live="polite" data-state="checking">配信情報を確認中…</span></div><button id="reload-app" type="button">最新版を確認</button></div>
 
 <section id="home" aria-labelledby="home-title">
- <div class="stat-grid">
-  <article class="stat-tile"><span>候補銘柄</span><strong id="stat-leads">—</strong><small>未接続</small></article>
-  <article class="stat-tile"><span>評価企業</span><strong id="stat-evaluated">—</strong><small id="stat-visible">取得待ち</small></article>
-  <article class="stat-tile featured"><span>検証済BUY候補</span><strong id="stat-buy">—</strong><small>本番評価のみ</small></article>
-  <article class="stat-tile"><span>通知履歴</span><strong id="stat-alerts">—</strong><small>表示可能な記録</small></article>
- </div>
 
  <section class="graph-dashboard" aria-labelledby="graph-heading">
-  <div class="graph-heading"><div><span class="eyebrow">VISUAL OVERVIEW</span><h2 id="graph-heading">評価進捗</h2></div><button type="button" id="graph-preview-toggle" aria-expanded="false" aria-controls="graph-demo">グラフ見本</button></div>
-  <a class="operation-link live-report-link" href="https://github.com/ogasawaratouei1998-lgtm/shun-x-lite/issues/156" target="_blank" rel="noopener noreferrer"><b>最新の実データ・財務観測グラフを見る</b><span>非公開の集計レポート（GitHub認証が必要） ↗</span></a>
-  <div id="graph-unavailable" class="graph-empty"><svg viewBox="0 0 320 138" role="img" aria-labelledby="empty-chart-title"><title id="empty-chart-title">実データ未接続のため評価推移は未取得</title><path class="chart-grid" d="M22 20H308M22 46H308M22 72H308M22 98H308M22 124H308M22 20V124"/></svg><div class="graph-empty-label"><strong>アプリ内の実データ表示は未接続</strong><span>上のリンクから実際の集計を確認できます</span></div></div>
-  <div id="graph-demo" hidden>
-   <p class="demo-label">架空のグラフ見本・実際の投資データではありません</p>
-   <svg class="trend-chart" viewBox="0 0 320 166" role="img" aria-labelledby="trend-title trend-desc"><title id="trend-title">架空の評価進捗例</title><desc id="trend-desc">例示1から5まで候補は8、12、16、18、20、評価は0、1、2、3、4。</desc><path class="chart-grid" d="M28 18H308M28 46H308M28 74H308M28 102H308M28 130H308M28 18V130"/><g class="axis-label"><text x="4" y="22">20</text><text x="10" y="78">10</text><text x="14" y="134">0</text><text x="28" y="153">例1</text><text x="96" y="153">例2</text><text x="164" y="153">例3</text><text x="232" y="153">例4</text><text x="289" y="153">例5</text></g><path class="trend-area" d="M32 85L100 63 168 40 236 29 304 18V130H32Z"/><path class="trend-primary" d="M32 85L100 63 168 40 236 29 304 18"/><path class="trend-secondary" d="M32 130L100 124 168 119 236 113 304 108"/><g class="trend-dots"><circle cx="32" cy="85" r="3"/><circle cx="100" cy="63" r="3"/><circle cx="168" cy="40" r="3"/><circle cx="236" cy="29" r="3"/><circle cx="304" cy="18" r="3"/></g></svg>
-   <div class="chart-legend"><span class="legend-blue">候補銘柄（例）</span><span class="legend-teal">評価企業（例）</span></div>
-   <div class="graph-demo-grid"><article class="graph-mini"><h3>根拠データ充足率（例）</h3><div class="coverage-row"><span>EPS 80%</span><meter min="0" max="100" value="80" aria-label="架空EPS充足率80パーセント"></meter></div><div class="coverage-row"><span>FCFF 60%</span><meter min="0" max="100" value="60" aria-label="架空FCFF充足率60パーセント"></meter></div><div class="coverage-row"><span>設備投資 50%</span><meter min="0" max="100" value="50" aria-label="架空設備投資充足率50パーセント"></meter></div></article><article class="graph-mini"><h3>改善課題の内訳（例）</h3><div class="donut-demo" role="img" aria-label="架空の課題10件、EPS4件、FCFF3件、その他3件"><span>10<small>件（例）</small></span></div><div class="donut-legend"><span>EPS 4</span><span>FCFF 3</span><span>その他 3</span></div></article></div>
-  </div>
+  <div class="graph-heading"><div><span class="eyebrow">01 / NOTIFICATION PROGRESS</span><h2 id="graph-heading">通知までの分析進捗</h2></div><button type="button" id="progress-refresh">更新</button></div>
+  <p id="progress-status" role="status" aria-live="polite">実行集計を取得中…</p>
+  <div class="stage-meter-list" id="live-progress" aria-label="直近の調査実行の工程別件数"></div>
+  <p class="data-note">直近1回の調査実績。財務資料の取得は評価完了を意味しません。通知0件でも正常な場合があります。</p>
  </section>
- <div class="graph-demo-grid graph-live-overview"><article class="graph-mini"><h3>根拠データ充足率</h3><div class="coverage-unknown"><span>EPS</span><b>—</b></div><div class="coverage-unknown"><span>FCFF</span><b>—</b></div><div class="coverage-unknown"><span>設備投資</span><b>—</b></div><p class="data-note">未取得</p></article><article class="graph-mini"><h3>改善課題の内訳</h3><div class="donut-unknown" role="img" aria-label="改善課題は未取得"><span>—<small>未取得</small></span></div><p class="data-note">分類データ接続待ち</p></article></div>
+ <button class="function-card" type="button" data-page-link="research"><span class="eyebrow">02 / STOCK ANALYSIS</span><strong>個別銘柄を分析</strong><span>日本株の証券コードを指定する ›</span></button>
+ <section class="graph-dashboard" aria-labelledby="completion-heading">
+  <span class="eyebrow">03 / DEVELOPMENT STATUS</span><h2 id="completion-heading">アプリの完成度</h2>
+  <p id="completion-summary">検証状況を取得中…</p><progress id="completion-meter" max="6" aria-label="本番稼働の検証済み条件数"></progress>
+  <div id="completion-checklist" class="completion-checklist"></div>
+  <article class="improvement-card"><h3>現在の改善優先項目</h3><p id="improvement-current">未取得</p></article>
+  <p class="data-note">完成度は6つの本番稼働条件の検証済み件数。作業時間の進捗率ではありません。</p>
+  <a class="operation-link live-report-link" href="https://github.com/ogasawaratouei1998-lgtm/shun-x-lite/issues/156" target="_blank" rel="noopener noreferrer"><b>実行根拠を確認（任意）</b><span>GitHub認証が必要 ↗</span></a>
+ </section>
+ <details class="diagnostic-disclosure"><summary>詳細診断・既存機能</summary><div class="stat-grid" hidden><article><strong id="stat-leads">—</strong></article><article><strong id="stat-evaluated">—</strong></article><article><strong id="stat-buy">—</strong></article><article><strong id="stat-alerts">—</strong></article></div>
  <div class="hero">
   <div class="section-eyebrow"><span class="connection-dot" aria-hidden="true"></span> RESEARCH COMMAND CENTER <span class="muted" id="last-updated">更新：未取得</span></div>
   <h2 id="home-title" class="hero-title">銘柄選別・分析の進捗</h2>
@@ -89,11 +88,12 @@
  <article class="panel focus-panel"><div class="eyebrow">NEXT REQUIRED ACTION</div><h3>現在のボトルネック</h3><p id="bottleneck">本番分析データの接続待ち</p><div class="meta-row"><span>直近実行</span><b id="run-state">未取得</b></div><div class="meta-row"><span>母集団データ</span><b id="master-state">未取得</b></div></article>
  <div class="section-heading"><div><span class="eyebrow">WATCHLIST</span><h2>注目すべき評価記録</h2></div><button type="button" class="text-button" data-page-link="research">一覧を見る <span aria-hidden="true">↗</span></button></div>
  <div id="priority-list" class="compact-stack"><div class="empty-state">公開ページには本番の銘柄データを表示しません。</div></div>
+ </details>
 </section>
 
 <section id="research" hidden aria-labelledby="research-title">
  <div class="page-intro"><span class="eyebrow">RESEARCH UNIVERSE</span><h2 id="research-title">銘柄分析</h2><p>銘柄ごとの根拠・リスク・次の審査条件を確認します。</p></div>
- <p class="banner">本番銘柄の検索は未接続です。稼働・改善画面から認証付きの分析記録を確認できます。</p><button type="button" id="toggle-demo" aria-expanded="false">架空サンプルを表示（操作確認用）</button><div id="demo-research" hidden><label for="query">架空サンプルの銘柄コード・企業名を検索</label>
+ <article class="panel"><h3>指定銘柄の分析依頼</h3><label for="ticker-request">日本株の証券コード（4桁・英字対応）</label><input id="ticker-request" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="4" placeholder="例：7203"><button type="button" id="ticker-submit" class="button-primary">分析依頼画面を開く</button><p id="ticker-status" role="status" aria-live="polite">現在はGitHubの非公開依頼画面で本人が送信する方式です。自動分析の受付は送信後です。</p><a class="operation-link" href="https://github.com/ogasawaratouei1998-lgtm/shun-x-lite/issues?q=is%3Aissue+%22SHUNX-TICKER%22" target="_blank" rel="noopener noreferrer"><b>依頼と結果を確認</b><span>非公開・GitHub認証が必要 ↗</span></a><p class="data-note">株価・評価額・個別銘柄の分析結果は公開ページに保存しません。</p></article><p class="banner">本番銘柄の検索は未接続です。上の依頼機能を使用してください。</p><button type="button" id="toggle-demo" aria-expanded="false">架空サンプルを表示（操作確認用）</button><div id="demo-research" hidden><label for="query">架空サンプルの銘柄コード・企業名を検索</label>
  <input id="query" type="search" autocomplete="off" placeholder="銘柄コード・企業名">
  <div id="companies" class="compact-stack"></div>
  <article id="details" class="panel" hidden></article></div>
@@ -121,10 +121,10 @@
  <article class="panel"><span class="eyebrow">ALERT POLICY</span><h3>通知対象の条件</h3><ul><li>根拠を検証済みのBUY候補</li><li>重要な業績修正または投資リスク</li><li>企業価値評価に重大な影響がある変更</li></ul><p class="muted">端末到達の確認には配信ログと実機での照合が必要です。</p></article>
 </section>
 
-<section id="settings" hidden aria-labelledby="settings-title"><div class="page-intro"><span class="eyebrow">DEVICE & NOTIFICATION</span><h2 id="settings-title">通知・端末設定</h2><p>通知の実機確認機能を維持しています。既存の登録をむやみに解除・再登録しないでください。</p></div><div class="panel"><h3>遠隔通知・端末登録</h3><p>通知サーバーの受付状態は「通知サーバーの状態を確認」で確かめてください。登録済みの端末は再登録する必要はありません。</p><p class="step-label">手順1：通知を許可</p><p id="push-status" role="status">通知の許可状況を確認中です。</p><button type="button" id="enable">通知の許可を確認</button><p class="step-label">手順2：サーバーの接続と登録コード</p><p id="enroll-status" role="status">通知登録 v22：読み込み中。ボタンが有効にならない場合はアプリを終了して再起動してください。</p><p id="enroll-guidance" role="status">準備状況を確認しています。</p><button type="button" id="push-prepare">通知サーバーの状態を確認</button><label for="pairing-code">初回端末登録用コード（登録済みなら不要）</label><input id="pairing-code" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="43" disabled><button type="button" id="push-enroll">この端末を登録</button><p class="step-label">手順3：通知の受信環境を診断・購読を復旧（送信なし）</p><button type="button" id="push-diagnose">このiPhoneの通知機能を確認する</button><p id="diagnose-status" role="status" aria-live="polite">この確認では遠隔通知は送信しません。</p><p>診断で「有効なプッシュ購読を確認できません」と出た場合は、手順2の初回端末登録用コード欄に43文字のコードを入力し、「このiPhoneの購読を復旧する」を押してください。既存のサーバー登録を登録コードで更新します。遠隔通知は送信しません。</p><button type="button" id="push-repair">このiPhoneの購読を復旧する（送信なし）</button><p class="step-label">手順4：復旧後の端末照合と第3回遠隔表示テスト</p><p>以前の第1・第2回テストは受付済みですが、iPhone表示は未確認です。復旧後、端末照合が一致した場合だけ第3回テストを実施できます。下の専用入力欄に43文字のコードを入力してください。自動送信・自動再送はありません。</p><label for="remote-code">遠隔通知テスト用コード（43文字）</label><input id="remote-code" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="43"><button type="button" id="push-inspect">端末とサーバーの登録を照合（送信なし）</button><p id="inspect-status" role="status" aria-live="polite">登録照合は未実施です。復旧後に43文字の遠隔テスト用コードを入力して押してください。通知は送信しません。</p><button type="button" id="push-remote-test">復旧後の遠隔通知を1回テストする</button><p id="remote-test-status" role="status" aria-live="polite">ここに遠隔テストの操作結果が表示されます。まだ送信していません。</p><button type="button" id="push-remove">端末登録を解除</button><p class="muted">通知テストは明示的に「表示改善版の遠隔通知を1回テストする」を押したときだけ実施します。通知許可は下の通知設定で行ってください。登録コードは保存しません。購読情報はブラウザーの通知機能で管理し、アプリ独自の保存は行いません。</p></div><div class="panel"><h3>iPhoneに追加</h3><p>HTTPSで配信後、Safariの共有メニューから「ホーム画面に追加」。追加したアプリで通知設定を行います。</p></div><div class="panel"><h3>端末内テスト（任意）</h3><button id="test" disabled>端末内テスト通知</button><p class="muted">端末内テストはボタン操作時のみ。サーバーからの配信ではありません。</p></div><div class="panel"><h3>非公開データ保護</h3><p>公開プレビューは通知登録専用です。非公開の分析結果は安全な閲覧環境を構築後に表示します。</p></div></section>
+<section id="settings" hidden aria-labelledby="settings-title"><div class="page-intro"><span class="eyebrow">DEVICE & NOTIFICATION</span><h2 id="settings-title">通知・端末設定</h2><p>通知の実機確認機能を維持しています。既存の登録をむやみに解除・再登録しないでください。</p></div><div class="panel"><h3>遠隔通知・端末登録</h3><p>通知サーバーの受付状態は「通知サーバーの状態を確認」で確かめてください。登録済みの端末は再登録する必要はありません。</p><p class="step-label">手順1：通知を許可</p><p id="push-status" role="status">通知の許可状況を確認中です。</p><button type="button" id="enable">通知の許可を確認</button><p class="step-label">手順2：サーバーの接続と登録コード</p><p id="enroll-status" role="status">通知登録 v23：読み込み中。ボタンが有効にならない場合はアプリを終了して再起動してください。</p><p id="enroll-guidance" role="status">準備状況を確認しています。</p><button type="button" id="push-prepare">通知サーバーの状態を確認</button><label for="pairing-code">初回端末登録用コード（登録済みなら不要）</label><input id="pairing-code" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="43" disabled><button type="button" id="push-enroll">この端末を登録</button><p class="step-label">手順3：通知の受信環境を診断・購読を復旧（送信なし）</p><button type="button" id="push-diagnose">このiPhoneの通知機能を確認する</button><p id="diagnose-status" role="status" aria-live="polite">この確認では遠隔通知は送信しません。</p><p>診断で「有効なプッシュ購読を確認できません」と出た場合は、手順2の初回端末登録用コード欄に43文字のコードを入力し、「このiPhoneの購読を復旧する」を押してください。既存のサーバー登録を登録コードで更新します。遠隔通知は送信しません。</p><button type="button" id="push-repair">このiPhoneの購読を復旧する（送信なし）</button><p class="step-label">手順4：復旧後の端末照合と第3回遠隔表示テスト</p><p>以前の第1・第2回テストは受付済みですが、iPhone表示は未確認です。復旧後、端末照合が一致した場合だけ第3回テストを実施できます。下の専用入力欄に43文字のコードを入力してください。自動送信・自動再送はありません。</p><label for="remote-code">遠隔通知テスト用コード（43文字）</label><input id="remote-code" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="43"><button type="button" id="push-inspect">端末とサーバーの登録を照合（送信なし）</button><p id="inspect-status" role="status" aria-live="polite">登録照合は未実施です。復旧後に43文字の遠隔テスト用コードを入力して押してください。通知は送信しません。</p><button type="button" id="push-remote-test">復旧後の遠隔通知を1回テストする</button><p id="remote-test-status" role="status" aria-live="polite">ここに遠隔テストの操作結果が表示されます。まだ送信していません。</p><button type="button" id="push-remove">端末登録を解除</button><p class="muted">通知テストは明示的に「表示改善版の遠隔通知を1回テストする」を押したときだけ実施します。通知許可は下の通知設定で行ってください。登録コードは保存しません。購読情報はブラウザーの通知機能で管理し、アプリ独自の保存は行いません。</p></div><div class="panel"><h3>iPhoneに追加</h3><p>HTTPSで配信後、Safariの共有メニューから「ホーム画面に追加」。追加したアプリで通知設定を行います。</p></div><div class="panel"><h3>端末内テスト（任意）</h3><button id="test" disabled>端末内テスト通知</button><p class="muted">端末内テストはボタン操作時のみ。サーバーからの配信ではありません。</p></div><div class="panel"><h3>非公開データ保護</h3><p>公開プレビューは通知登録専用です。非公開の分析結果は安全な閲覧環境を構築後に表示します。</p></div></section>
 </main>
 <nav class="bottom-nav" aria-label="メインメニュー">
- <button type="button" data-page="home" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V22h-7v-7h-4v7H3z"/></svg><span>ホーム</span></button>
+ <button type="button" data-page="home" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V23h-7v-7h-4v7H3z"/></svg><span>ホーム</span></button>
  <button type="button" data-page="research"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M3 20h18M5 16l5-5 4 3 6-8M16 6h4v4"/></svg><span>銘柄分析</span></button>
  <button type="button" data-page="operations"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7a8 8 0 0 0-14-1L3 9m0-5v5h5M4 17a8 8 0 0 0 14 1l3-3m0 5v-5h-5"/></svg><span>稼働・改善</span></button>
  <button type="button" data-page="alerts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span>通知履歴</span></button>

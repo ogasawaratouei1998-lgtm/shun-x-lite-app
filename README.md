@@ -12,3 +12,5 @@ V20: notification-only manual review replaces in-app approval practice; open the
 V21: blue/teal light dashboard, opt-in explicitly fictional graph preview, unknown live metrics remain unfilled. Preserve notification registration, local PIN, approval links and app identity. Versioned model cache and offline fallback for update navigation; preserve alert/approval hash during updates. No production data reader or sender enabled.
 
 V22: direct link to the private current research aggregate report. In-app private metrics remain unconnected; GitHub authentication remains required. No public financial data, access tokens or registration changes.
+
+V23: three primary functions only: verified operational progress counts, a private ticker-request draft, and six evidence-based readiness checks with a fixed improvement label. public-progress.json contains non-sensitive aggregate counts only; update from verified completed runs, never individual stock or secret values. The ticker request requires owner GitHub submission; the app is not a live private analysis reader.
