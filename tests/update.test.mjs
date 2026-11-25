@@ -4,7 +4,7 @@ import vm from 'node:vm';
 import {readFileSync} from 'node:fs';
 const load=name=>readFileSync(new URL('../'+name,import.meta.url),'utf8');
 
-async function screen({server=21,code='',failFetch=false,failWorker=false}={}){
+async function screen({server=21,code='',failFetch=false,failWorker=false,hash=''}={}){
  const events={},requests=[],navigation=[];
  const elements={
   'reload-app':{disabled:false,textContent:'',callbacks:{},addEventListener(type,fn){this.callbacks[type]=fn;}},
@@ -17,7 +17,7 @@ async function screen({server=21,code='',failFetch=false,failWorker=false}={}){
  const registration={update:async()=>{workerUpdates++;if(failWorker)throw Error('SW_UPDATE_FAILED');}};
  const worker={getRegistration:async()=>registration,addEventListener:(name,fn)=>{events[name]=fn;}};
  const document={readyState:'complete',getElementById:id=>elements[id]||null,querySelectorAll:()=>[]};
- const window={location:{href:'https://example.test/shun-x-lite-app/',assign:dest=>navigation.push(dest)}};
+ const window={location:{href:'https://example.test/shun-x-lite-app/'+hash,hash,assign:dest=>navigation.push(dest)}};
  const fetcher=async(url,options)=>{
   requests.push({url,options});
   if(failFetch)throw Error('OFFLINE');
@@ -82,4 +82,11 @@ test('remote push receiver, install scope, CSP and uncached version endpoint are
  assert.doesNotMatch(sw,/SHELL=\[[^\]]*version\.json/);
  assert.match(sw,/web_push===8030/);assert.match(sw,/REMOTE_CONNECTIVITY_TEST/);
  assert.equal(manifest.id,'./');assert.equal(manifest.start_url,'./');assert.equal(manifest.scope,'./');
+});
+
+test('explicit update preserves notification and approval routes only',async()=>{
+ for(const hash of ['#alerts','#approvals','#unexpected']){
+  const s=await screen({server:22,hash});await s.tap();
+  assert.deepEqual(s.navigation,['./?app=v22'+(hash==='#unexpected'?'':hash)]);
+ }
 });

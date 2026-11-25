@@ -74,7 +74,7 @@ test('no network or identity provider exists in lock and email form removed',()=
  const code=read('local-pin.js'),html=read('index.html'),sw=read('sw.js');
  assert.doesNotMatch(code,/\/auth\/|OTP|supabase|send-code|fetch\(|https?:\/\//i);
  assert.doesNotMatch(html,/id="email"|id="otp"|id="login-form"/);
- assert.match(html,/id="screen-pin"/);assert.match(html,/local-pin\.js\?v=20/);
- assert.match(sw,/local-pin\.js\?v=20/);
+ assert.match(html,/id="screen-pin"/);assert.match(html,/local-pin\.js\?v=21/);
+ assert.match(sw,/local-pin\.js\?v=21/);
  assert.match(sw,/web_push===8030/);
 });

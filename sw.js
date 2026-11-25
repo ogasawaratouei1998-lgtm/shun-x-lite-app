@@ -1,6 +1,6 @@
 // Public SHUN-X Lite PWA: only a generic material-alert banner, never confidential research.
 const CACHE='shunx-pages-preview-v21';
-const SHELL=['./','./index.html','./style.css?v=20','./app.js?v=20','./boot.js?v=20','./local-pin.js?v=20','./model.js?v=21','./enrollment.js?v=20','./browser-registration.js?v=20','./manifest.webmanifest','./icon.svg','./icon-180.png'];
+const SHELL=['./','./index.html','./style.css?v=21','./app.js?v=21','./boot.js?v=21','./local-pin.js?v=21','./model.js?v=21','./enrollment.js?v=21','./browser-registration.js?v=21','./manifest.webmanifest','./icon.svg','./icon-180.png'];
 const APP_HOME='https://ogasawaratouei1998-lgtm.github.io/shun-x-lite-app/';
 const MATERIAL_TAG='shunx-material-alert-v1';
 const APPROVAL_TAG='shunx-improvement-approval-v1';
