@@ -6,3 +6,5 @@ V17 links the home dashboard to owner-authorized private SHUN-X Actions records.
 V18 visual terminal: five-tab navigation, quick-action cards, expandable 12-stage flow, universe and adaptive operations panels, opt-in fictional valuation comparison. Live counts remain unknown; no private data or notification changes.
 
 V19: approval center navigation, clearly isolated practice controls, private GitHub proposal link and dedicated approval notification receiver/routing. No live sender, authenticated inbox or production decision submission is connected. No credentials, proposal contents or private metrics published.
+
+V20: notification-only manual review replaces in-app approval practice; open the private GitHub proposal list and approve manually. No passkey enrollment or approval execution in app. Sender requires separate live configuration.

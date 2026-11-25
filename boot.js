@@ -1,7 +1,7 @@
 // Public app update controller and fail-safe boot. No stored secrets or push registration mutations.
 (function(){
  'use strict';
- const CURRENT_VERSION=19;
+ const CURRENT_VERSION=20;
  function start(){
   const reload=document.getElementById('reload-app');
   const status=document.getElementById('update-status');
@@ -89,7 +89,7 @@
    if(window.__shunxEnrollmentBooted===true)return;
    enroll.textContent='通知画面のプログラムを読み込めません。アプリを一度終了して開き直してください。改善しない場合はSafariで最新版を開き、ホーム画面アプリを再起動してください。';
    const guidance=document.getElementById('enroll-guidance');
-   if(guidance)guidance.textContent='通知登録 v19 が未起動です。秘密情報は入力しないでください。';
+   if(guidance)guidance.textContent='通知登録 v20 が未起動です。秘密情報は入力しないでください。';
   };
   for(const id of ['push-prepare','push-enroll','push-repair','push-remove','push-remote-test','push-inspect','push-diagnose']){
    const b=document.getElementById(id);

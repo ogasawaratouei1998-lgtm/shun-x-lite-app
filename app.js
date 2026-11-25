@@ -36,11 +36,6 @@ if('serviceWorker' in navigator){
  });
 }
 openMaterialAlertSection();
-const demoLabels=Object.freeze({approve:'承認',defer:'保留',reject:'却下'});
-document.querySelectorAll('[data-demo-decision]').forEach(b=>b.addEventListener('click',()=>{
- const label=demoLabels[b.dataset.demoDecision];
- if(label)$('approval-demo-result').textContent='操作練習：'+label+'を選択しました。本番への送信・保存・反映はありません。';
-}));
 function sampleDetail(c){
  const box=$('details');box.replaceChildren();box.hidden=false;
  const h=document.createElement('h3');h.textContent=c.name+'（架空サンプル）';box.append(h);
