@@ -8,3 +8,5 @@ V18 visual terminal: five-tab navigation, quick-action cards, expandable 12-stag
 V19: approval center navigation, clearly isolated practice controls, private GitHub proposal link and dedicated approval notification receiver/routing. No live sender, authenticated inbox or production decision submission is connected. No credentials, proposal contents or private metrics published.
 
 V20: notification-only manual review replaces in-app approval practice; open the private GitHub proposal list and approve manually. No passkey enrollment or approval execution in app. Sender requires separate live configuration.
+
+V21: blue/teal light dashboard, opt-in explicitly fictional graph preview, unknown live metrics remain unfilled. Preserve notification registration, local PIN, approval links and app identity. Versioned model cache and offline fallback for update navigation; preserve alert/approval hash during updates. No production data reader or sender enabled.

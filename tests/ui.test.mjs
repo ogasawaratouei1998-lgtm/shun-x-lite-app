@@ -50,14 +50,14 @@ test('server closed remains visible without submitting enrollment',async()=>{
 });
 test('public shell matches versioned script, cache and module and exposes no server secrets',()=>{
  const html=load('index.html'),sw=load('sw.js');
- assert.match(html,/boot\.js/);assert.match(html,/enrollment\.js\?v=20/);
- assert.match(sw,/shunx-pages-preview-v20/);
+ assert.match(html,/boot\.js/);assert.match(html,/enrollment\.js\?v=21/);
+ assert.match(sw,/shunx-pages-preview-v21/);
  assert.match(sw,/browser-registration\.js/);
  assert.match(sw,/boot\.js/);
  for(const t of [html,sw,script,load('boot.js')])assert.doesNotMatch(t,/SHUNX_PUSH_SEED|SUPABASE_SERVICE_ROLE_KEY|SHUNX_PUSH_DISPATCH/);
 });
 
-test('iPhone form labels and actions have explicit block layout and versioned assets',()=>{const css=load('style.css'),html=load('index.html'),sw=load('sw.js');assert.match(css,/#settings \.panel label\{display:block/);assert.match(css,/#settings \.panel button\{display:block;width:100%/);assert.match(html,/アプリ版：v20/);assert.match(html,/id="reload-app"/);assert.match(html,/id="enable"/);assert.match(html,/id="push-repair"/);assert.match(sw,/self\.skipWaiting\(\)/);});
+test('iPhone form labels and actions have explicit block layout and versioned assets',()=>{const css=load('style.css'),html=load('index.html'),sw=load('sw.js');assert.match(css,/#settings \.panel label\{display:block/);assert.match(css,/#settings \.panel button\{display:block;width:100%/);assert.match(html,/アプリ版：v21/);assert.match(html,/id="reload-app"/);assert.match(html,/id="enable"/);assert.match(html,/id="push-repair"/);assert.match(sw,/self\.skipWaiting\(\)/);});
 
 test('remote delivery is never triggered by startup or by merely registering',async()=>{const v=await screen();assert.equal(v.getRemote(),0);v.elements['pairing-code'].value='A'.repeat(43);await v.click('push-enroll');assert.equal(v.getRemote(),0);});
 test('remote physical delivery test requires explicit button and pairing code',async()=>{const v=await screen();await v.click('push-remote-test');assert.equal(v.getRemote(),0);v.elements['remote-code'].value='A'.repeat(43);await v.click('push-remote-test');assert.equal(v.getRemote(),1);assert.match(v.elements['remote-test-status'].textContent,/iPhoneに届いたか/);assert.equal(v.elements['remote-code'].value,'');});
@@ -80,7 +80,7 @@ test('owner device inspection compares server registration without sending notif
  assert.match(v.elements['inspect-status'].textContent,/一致しています/);assert.match(v.elements['inspect-status'].textContent,/第3回：未送信/);
  assert.match(v.elements['inspect-status'].textContent,/遠隔送信なし/);
 });
-test('inspection control is included in startup fallback and versioned shell',()=>{const h=load('index.html'),s=load('sw.js'),b=load('boot.js');assert.match(h,/id="push-inspect"/);assert.match(h,/id="inspect-status"/);assert.match(b,/push-inspect/);assert.match(s,/shunx-pages-preview-v20/);});
+test('inspection control is included in startup fallback and versioned shell',()=>{const h=load('index.html'),s=load('sw.js'),b=load('boot.js');assert.match(h,/id="push-inspect"/);assert.match(h,/id="inspect-status"/);assert.match(b,/push-inspect/);assert.match(s,/shunx-pages-preview-v21/);});
 
 test('missing local subscription is repaired only on an explicit owner tap, without sending',async()=>{
  const v=await screen();assert.equal(v.getRepairs(),0);assert.equal(v.getRemote(),0);
@@ -102,7 +102,7 @@ test('premium preview retains every existing notification operation and hides pr
  }
  assert.match(html,/銘柄選別・分析の進捗/);
  assert.match(html,/本番の銘柄評価は未接続/);
- assert.match(html,/アプリ版：v20/);
+ assert.match(html,/アプリ版：v21/);
  assert.doesNotMatch(html,/src="\.\/account\.js"/);
  assert.doesNotMatch(app,/\/api\/research|fetch\('\/api\//);
  assert.match(css,/--gold:/);
@@ -116,7 +116,7 @@ test('public service worker retains fixed push payload handlers and scoped URLs'
  assert.match(sw,/web_push===8030/);
  assert.match(sw,/REMOTE_CONNECTIVITY_TEST/);
  assert.match(sw,/notificationclick/);
- assert.match(sw,/shunx-pages-preview-v20/);
+ assert.match(sw,/shunx-pages-preview-v21/);
  assert.match(sw,/icon-180\.png/);
 });
 
