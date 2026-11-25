@@ -1,4 +1,4 @@
-import {filterSamples,canTest} from './model.js?v=22';
+import {filterSamples,canTest} from './model.js?v=23';
 const $=id=>document.getElementById(id);
 const isPublicPreview=!document.querySelector('script[src="./account.js"]');
 function page(name){
@@ -36,14 +36,6 @@ if('serviceWorker' in navigator){
  });
 }
 openMaterialAlertSection();
-const graphToggle=$('graph-preview-toggle');
-graphToggle.addEventListener('click',()=>{
- const show=$('graph-demo').hidden;
- $('graph-demo').hidden=!show;
- $('graph-unavailable').hidden=show;
- graphToggle.setAttribute('aria-expanded',String(show));
- graphToggle.textContent=show?'見本を閉じる':'グラフ見本';
-});
 function sampleDetail(c){
  const box=$('details');box.replaceChildren();box.hidden=false;
  const h=document.createElement('h3');h.textContent=c.name+'（架空サンプル）';box.append(h);
@@ -75,8 +67,8 @@ function listSamples(){
  if(!box.children.length)box.textContent='該当する架空サンプルはありません。';
 }
 if(isPublicPreview){
- $('mode').textContent='PUBLIC DEMO';
- $('notice').textContent='公開プレビュー：本番の投資分析データは未接続です。端末登録・遠隔通知の診断は「設定」から利用できます。';
+ $('mode').textContent='進捗表示';
+ $('notice').textContent='公開可能な進捗集計のみ表示します。個別の株価・評価額は非公開です。';
  $('hero-state').textContent='リサーチ端末';
  $('hero-message').textContent='日次・週次の実行記録に接続できます。アプリ内の非公開データ表示は未接続です。';
  $('bottleneck').textContent='稼働・改善画面から、最新の実行結果と改善課題を確認してください。';

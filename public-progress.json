@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "observed_at": "2026-11-25T07:46:06.000Z",
+  "counts": {
+    "research": 40,
+    "annual": 39,
+    "valued": 0,
+    "buy": 0,
+    "delivery": 0
+  },
+  "checks": [
+    true,
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "focus": "eps_fcff"
+}

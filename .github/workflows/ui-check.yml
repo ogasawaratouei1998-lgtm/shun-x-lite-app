@@ -7,6 +7,8 @@ on:
       - 'boot.js'
       - 'local-pin.js'
       - 'version.json'
+      - 'progress.mjs'
+      - 'public-progress.json'
       - 'style.css'
       - 'app.js'
       - 'enrollment.js'
@@ -15,7 +17,7 @@ on:
       - 'tests/**'
       - '.github/workflows/ui-check.yml'
   pull_request:
-    paths: ['index.html', 'boot.js', 'local-pin.js', 'version.json', 'style.css', 'app.js', 'enrollment.js', 'sw.js', 'browser-registration.js', 'tests/**', '.github/workflows/ui-check.yml']
+    paths: ['index.html', 'boot.js', 'local-pin.js', 'version.json', 'progress.mjs', 'public-progress.json', 'style.css', 'app.js', 'enrollment.js', 'sw.js', 'browser-registration.js', 'tests/**', '.github/workflows/ui-check.yml']
   workflow_run:
     workflows: ['pages build and deployment']
     types: [completed]
@@ -32,7 +34,7 @@ jobs:
           persist-credentials: false
       - name: Check JavaScript syntax
         run: |
-          for f in app.js enrollment.js browser-registration.js sw.js boot.js local-pin.js; do
+          for f in progress.mjs app.js enrollment.js browser-registration.js sw.js boot.js local-pin.js; do
             node --input-type=module --check < "$f"
           done
       - name: Test startup and touch-button behavior
@@ -48,19 +50,19 @@ jobs:
           set -eu
           base='https://ogasawaratouei1998-lgtm.github.io/shun-x-lite-app'
           for n in $(seq 1 18); do
-            if curl -fsSL --retry 1 "$base/index.html" | grep -q 'enrollment.js?v=22'; then break; fi
+            if curl -fsSL --retry 1 "$base/index.html" | grep -q 'enrollment.js?v=23'; then break; fi
             if [ "$n" = 18 ]; then echo 'PAGES_UPDATE_MISSING'; exit 1; fi
             sleep 5
           done
           curl -fsSL --retry 2 "$base/enrollment.js" | grep -q 'browser-registration.js'
           curl -fsSL --retry 2 "$base/index.html" | grep -q '銘柄選別・分析の進捗'
           curl -fsSL --retry 2 "$base/index.html" | grep -q 'id="update-status"'
-          curl -fsSL --retry 2 "$base/index.html" | grep -q 'id="graph-demo" hidden'
+          curl -fsSL --retry 2 "$base/index.html" | grep -q 'id="live-progress"'
           curl -fsSL --retry 2 "$base/style.css" | grep -q 'color-scheme:light'
-          curl -fsSL --retry 2 "$base/version.json" | grep -q '"version": 22'
-          curl -fsSL --retry 2 "$base/index.html" | grep -q 'アプリ版：v22'
+          curl -fsSL --retry 2 "$base/version.json" | grep -q '"version": 23'
+          curl -fsSL --retry 2 "$base/index.html" | grep -q 'アプリ版：v23'
           curl -fsSL --retry 2 "$base/icon.svg" | grep -q 'linearGradient'
-          curl -fsSL --retry 2 "$base/sw.js" | grep -q 'shunx-pages-preview-v22'
+          curl -fsSL --retry 2 "$base/sw.js" | grep -q 'shunx-pages-preview-v23'
           curl -fsSL --retry 2 "$base/boot.js" | grep -q 'shunxEnrollmentBooted'
           curl -fsSL --retry 2 "$base/index.html" | grep -q 'id="screen-pin"'
           curl -fsSL --retry 2 "$base/local-pin.js" | grep -q 'PBKDF2'
@@ -69,4 +71,4 @@ jobs:
           curl -fsSL --retry 2 "$base/index.html" | grep -q 'id="push-repair"'
           curl -fsSL --retry 2 "$base/sw.js" | grep -q 'web_push===8030'
           curl -fsSI --retry 2 "$base/browser-registration.js" | tr -d '\r' | grep -Ei '^content-type: *(text/javascript|application/javascript|application/x-javascript)' >/dev/null
-          echo 'DEPLOYED_PWA_V22_VERIFIED: source loaded; no backend registration attempted'
+          echo 'DEPLOYED_PWA_V23_VERIFIED: source loaded; no backend registration attempted'
