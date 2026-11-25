@@ -1,4 +1,4 @@
-import {filterSamples,canTest} from './model.js';
+import {filterSamples,canTest} from './model.js?v=21';
 const $=id=>document.getElementById(id);
 const isPublicPreview=!document.querySelector('script[src="./account.js"]');
 function page(name){
@@ -8,7 +8,7 @@ function page(name){
   if(b.dataset.page===name||(name==='approvals'&&b.dataset.page==='operations'))b.setAttribute('aria-current','page');
   else b.removeAttribute('aria-current');
  }
- window.scrollTo?.({top:0,behavior:'instant'});
+ window.scrollTo?.({top:0,behavior:'auto'});
 }
 document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>page(b.dataset.page)));
 function operationTab(name){
@@ -36,6 +36,14 @@ if('serviceWorker' in navigator){
  });
 }
 openMaterialAlertSection();
+const graphToggle=$('graph-preview-toggle');
+graphToggle.addEventListener('click',()=>{
+ const show=$('graph-demo').hidden;
+ $('graph-demo').hidden=!show;
+ $('graph-unavailable').hidden=show;
+ graphToggle.setAttribute('aria-expanded',String(show));
+ graphToggle.textContent=show?'見本を閉じる':'グラフ見本';
+});
 function sampleDetail(c){
  const box=$('details');box.replaceChildren();box.hidden=false;
  const h=document.createElement('h3');h.textContent=c.name+'（架空サンプル）';box.append(h);

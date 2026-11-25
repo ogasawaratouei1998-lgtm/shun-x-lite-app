@@ -1,6 +1,6 @@
 // Public SHUN-X Lite PWA: only a generic material-alert banner, never confidential research.
-const CACHE='shunx-pages-preview-v20';
-const SHELL=['./','./index.html','./style.css?v=20','./app.js?v=20','./boot.js?v=20','./local-pin.js?v=20','./model.js','./enrollment.js?v=20','./browser-registration.js?v=20','./manifest.webmanifest','./icon.svg','./icon-180.png'];
+const CACHE='shunx-pages-preview-v21';
+const SHELL=['./','./index.html','./style.css?v=20','./app.js?v=20','./boot.js?v=20','./local-pin.js?v=20','./model.js?v=21','./enrollment.js?v=20','./browser-registration.js?v=20','./manifest.webmanifest','./icon.svg','./icon-180.png'];
 const APP_HOME='https://ogasawaratouei1998-lgtm.github.io/shun-x-lite-app/';
 const MATERIAL_TAG='shunx-material-alert-v1';
 const APPROVAL_TAG='shunx-improvement-approval-v1';
@@ -8,7 +8,20 @@ const TEST_TAGS=new Set(['shunx-remote-connectivity-v2','shunx-remote-connectivi
 
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('shunx-pages-preview-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
-self.addEventListener('fetch',event=>{const u=new URL(event.request.url);if(event.request.method!=='GET'||u.origin!==self.location.origin||!SHELL.some(p=>new URL(p,self.registration.scope).href===u.href))return;event.respondWith(fetch(event.request).catch(()=>caches.match(event.request)));});
+self.addEventListener('fetch',event=>{
+ const u=new URL(event.request.url),home=new URL('./',self.registration.scope);
+ if(event.request.method!=='GET'||u.origin!==home.origin)return;
+ const appReload=event.request.mode==='navigate'&&u.pathname===home.pathname&&/^\?app=v[0-9]{1,4}$/.test(u.search);
+ const shell=SHELL.some(p=>new URL(p,self.registration.scope).href===u.href);
+ if(!appReload&&!shell)return;
+ // Cache only the reviewed static shell. An update URL can fall back to
+ // the installed index when offline; never cache private or API responses.
+ const fallback=appReload?home.href:event.request;
+ event.respondWith(fetch(event.request).catch(async()=>{
+  const cache=await caches.open(CACHE);
+  return (await cache.match(fallback))||Response.error();
+ }));
+});
 
 self.addEventListener('push',event=>{
  let p;try{p=event.data?.json();}catch{return;}
