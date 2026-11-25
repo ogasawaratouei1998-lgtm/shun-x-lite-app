@@ -10,3 +10,5 @@ V19: approval center navigation, clearly isolated practice controls, private Git
 V20: notification-only manual review replaces in-app approval practice; open the private GitHub proposal list and approve manually. No passkey enrollment or approval execution in app. Sender requires separate live configuration.
 
 V21: blue/teal light dashboard, opt-in explicitly fictional graph preview, unknown live metrics remain unfilled. Preserve notification registration, local PIN, approval links and app identity. Versioned model cache and offline fallback for update navigation; preserve alert/approval hash during updates. No production data reader or sender enabled.
+
+V22: direct link to the private current research aggregate report. In-app private metrics remain unconnected; GitHub authentication remains required. No public financial data, access tokens or registration changes.

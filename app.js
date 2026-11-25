@@ -1,4 +1,4 @@
-import {filterSamples,canTest} from './model.js?v=21';
+import {filterSamples,canTest} from './model.js?v=22';
 const $=id=>document.getElementById(id);
 const isPublicPreview=!document.querySelector('script[src="./account.js"]');
 function page(name){
