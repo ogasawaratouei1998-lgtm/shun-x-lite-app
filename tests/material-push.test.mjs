@@ -10,7 +10,7 @@ function fixture({hasClient=true,canNavigate=true}={}){
  const handlers={},shown=[],windows=[],navigations=[],messages=[];
  let focuses=0;
  const client={
-  url:ROOT+'?app=v21',
+  url:ROOT+'?app=v22',
   async navigate(url){if(!canNavigate)throw Error('NAVIGATION_BLOCKED');navigations.push(url);return this;},
   async focus(){focuses++;return this;},
   postMessage(v){messages.push(v);}
