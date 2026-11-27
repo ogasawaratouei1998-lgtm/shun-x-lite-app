@@ -1,13 +1,4 @@
 {
-  "schema": 1,
-  "observed_at": "2026-11-27T05:41:13.122Z",
-  "counts": {
-    "research": 29,
-    "annual": 28,
-    "valued": 0,
-    "buy": 0,
-    "delivery": 0
-  },
   "checks": [
     true,
     false,
@@ -16,5 +7,14 @@
     false,
     false
   ],
-  "focus": "eps_fcff"
+  "counts": {
+    "annual": 16,
+    "buy": 0,
+    "delivery": 0,
+    "research": 17,
+    "valued": 0
+  },
+  "focus": "eps_fcff",
+  "observed_at": "2026-11-27T06:57:01.751Z",
+  "schema": 1
 }
